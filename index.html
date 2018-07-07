@@ -12,7 +12,7 @@
 
 function action_reload(json) {
   $.ajax({type: "POST",
-    url: "cgi/vb.cgi",
+    url: "cgi-bin/vb.cgi",
     data: json,
     success: function(response){
       var result = JSON.parse(response);
@@ -81,7 +81,7 @@ function add_guest() {
 
 $(document).ready(function() {
   $.ajax({type: "POST",
-    url: "cgi/vb.cgi",
+    url: "cgi-bin/vb.cgi",
     data: {
       action: 'event',
       id: 1,
