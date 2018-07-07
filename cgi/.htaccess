@@ -1,0 +1,4 @@
+<Files ~ "\.(sh|sqlite)$">
+Order Allow,Deny
+Deny from all
+</Files>

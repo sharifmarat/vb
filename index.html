@@ -1,0 +1,164 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Let's volleyball</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="css/main.css?v=1.0.2">
+    <script src="js/jquery-2.2.3.min.js"></script>
+  </head>
+
+  <script>
+
+function action_reload(json) {
+  $.ajax({type: "POST",
+    url: "cgi/vb.cgi",
+    data: json,
+    success: function(response){
+      var result = JSON.parse(response);
+      if (result.status != 0) {
+        alert('error: ' + result.message);
+      } else {
+        window.location.reload();
+      }
+    },
+    error: function(response){
+      alert('server error');
+    }
+  });
+}
+
+function update_guest(guest_id) {
+  var name = $('#guest_name_' + guest_id).text();
+  var p = prompt('Type YES to update ' + name);
+  if (p == null) {
+    return;
+  }
+  if (p != 'YES') {
+    alert('Update failed. You had to type YES.');
+    return;
+  }
+
+  var position = $('#guest_position_' + guest_id).val();
+  var paid = $('#guest_paid_' + guest_id).is(':checked') ? 1 : 0;
+
+  action_reload({
+    action: 'update_guest',
+    id: guest_id,
+    position: position,
+    is_paid: paid
+  });
+}
+
+function remove_guest(guest_id) {
+  var name = $('#guest_name_' + guest_id).text();
+  var p = prompt('Type YES to remove ' + name + '. This is permanent!');
+  if (p == null) {
+    return;
+  }
+  if (p != 'YES') {
+    alert('Remove failed. You had to type YES to remove.');
+    return;
+  }
+
+  action_reload({
+    action: 'remove_guest',
+    id: guest_id
+  });
+}
+
+function add_guest() {
+  var name = $('#guest_name_new').val();
+  var position = $('#guest_position_new').val();
+
+  action_reload({
+    action: 'add_guest',
+    event_id: 1,
+    name: name,
+    position: position 
+  });
+}
+
+$(document).ready(function() {
+  $.ajax({type: "POST",
+    url: "cgi/vb.cgi",
+    data: {
+      action: 'event',
+      id: 1,
+    },
+    success: function(response){
+      var result = JSON.parse(response);
+      if (result.status != 0) {
+        alert('error');
+      } else {
+        var tr;
+        for (var i = 0; i < result.message.length; ++i) {
+          if (i == 0) {
+            $('#event_date').text(result.message[i].date);
+            $('#event_location').text(result.message[i].location);
+            $('#payment_link').text('TBD');
+          }
+
+          var guest_id = result.message[i].guest_id;
+
+          tr = $('<tr/>');
+          tr.append('<td>' + (i+1) + '</td>');
+          tr.append('<td><label id="guest_name_' + guest_id + '">' + result.message[i].guest_name + '</label></td>');
+          tr.append('<td><input type="text" id="guest_position_' + guest_id + '" value="' + result.message[i].guest_position + '" size="10"/></td>');
+          tr.append('<td><input type="checkbox" id="guest_paid_' + guest_id + '" value="" ' + (result.message[i].guest_paid==1?'checked':'') + '/></td>');
+          tr.append('<td><input type="button" value="Update" onclick="update_guest(' + guest_id + ')"/></td>');
+          tr.append('<td><input type="button" value="Remove" onclick="remove_guest(' + guest_id + ')"/></td>');
+          $('#event-table').append(tr);
+        }
+
+        tr = $('<tr/>');
+        tr.append('<td>New</td>');
+        tr.append('<td><input type="text" id="guest_name_new" value="" size="10"/></td>');
+        tr.append('<td><input type="text" id="guest_position_new" value="" size="10"/></td>');
+        tr.append('<td></td>');
+        tr.append('<td>' + '<input type="button" value="Add" onclick="add_guest()"' + '</td>');
+        tr.append('<td></td>');
+        $('#event-table').append(tr);
+      }
+    },
+    error: function(response){
+      alert('server error');
+    }
+  });
+});
+  </script>
+
+
+  <body>
+    <div id="content">
+      <div class="content-wrap">
+        <a href="events.html">Go to all events</a>
+
+        <hr>
+
+        <p>
+          Most recent event:
+            <strong>
+              <label id='event_date'>Loading...</label>
+              <label id='event_location'></label>
+            </strong>, 
+            pay here: <label id='payment_link'>Loading...</label>
+        </p>
+
+        <table id="event-table" class="table">
+          <thead>
+            <tr>
+              <th>Count</th>
+              <th>Name</th>
+              <th>Position</th>
+              <th>Paid?</th>
+              <th>Update</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </body>
+
+</html>
