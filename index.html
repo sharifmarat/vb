@@ -4,159 +4,162 @@
     <meta name="viewport" content="width=device-width">
     <title>Let's volleyball</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="css/main.css?v=1.0.2">
     <script src="js/jquery-2.2.3.min.js"></script>
+    <script src="js/underscore-min.js"></script>
   </head>
 
-  <script>
-
-function action_reload(json) {
-  $.ajax({type: "POST",
-    url: "cgi-bin/vb.cgi",
-    data: json,
-    success: function(response){
-      var result = JSON.parse(response);
-      if (result.status != 0) {
-        alert('error: ' + result.message);
-      } else {
-        window.location.reload();
-      }
-    },
-    error: function(response){
-      alert('server error');
-    }
-  });
-}
-
-function update_guest(guest_id) {
-  var name = $('#guest_name_' + guest_id).text();
-  var p = prompt('Type YES to update ' + name);
-  if (p == null) {
-    return;
-  }
-  if (p != 'YES') {
-    alert('Update failed. You had to type YES.');
-    return;
-  }
-
-  var position = $('#guest_position_' + guest_id).val();
-  var paid = $('#guest_paid_' + guest_id).is(':checked') ? 1 : 0;
-
-  action_reload({
-    action: 'update_guest',
-    id: guest_id,
-    position: position,
-    is_paid: paid
-  });
-}
-
-function remove_guest(guest_id) {
-  var name = $('#guest_name_' + guest_id).text();
-  var p = prompt('Type YES to remove ' + name + '. This is permanent!');
-  if (p == null) {
-    return;
-  }
-  if (p != 'YES') {
-    alert('Remove failed. You had to type YES to remove.');
-    return;
-  }
-
-  action_reload({
-    action: 'remove_guest',
-    id: guest_id
-  });
-}
-
-function add_guest() {
-  var name = $('#guest_name_new').val();
-  var position = $('#guest_position_new').val();
-
-  action_reload({
-    action: 'add_guest',
-    event_id: 1,
-    name: name,
-    position: position 
-  });
-}
-
-$(document).ready(function() {
-  $.ajax({type: "POST",
-    url: "cgi-bin/vb.cgi",
-    data: {
-      action: 'event',
-      id: 1,
-    },
-    success: function(response){
-      var result = JSON.parse(response);
-      if (result.status != 0) {
-        alert('error');
-      } else {
-        var tr;
-        for (var i = 0; i < result.message.length; ++i) {
-          if (i == 0) {
-            $('#event_date').text(result.message[i].date);
-            $('#event_location').text(result.message[i].location);
-            $('#payment_link').text('TBD');
-          }
-
-          var guest_id = result.message[i].guest_id;
-
-          tr = $('<tr/>');
-          tr.append('<td>' + (i+1) + '</td>');
-          tr.append('<td><label id="guest_name_' + guest_id + '">' + result.message[i].guest_name + '</label></td>');
-          tr.append('<td><input type="text" id="guest_position_' + guest_id + '" value="' + result.message[i].guest_position + '" size="10"/></td>');
-          tr.append('<td><input type="checkbox" id="guest_paid_' + guest_id + '" value="" ' + (result.message[i].guest_paid==1?'checked':'') + '/></td>');
-          tr.append('<td><input type="button" value="Update" onclick="update_guest(' + guest_id + ')"/></td>');
-          tr.append('<td><input type="button" value="Remove" onclick="remove_guest(' + guest_id + ')"/></td>');
-          $('#event-table').append(tr);
-        }
-
-        tr = $('<tr/>');
-        tr.append('<td>New</td>');
-        tr.append('<td><input type="text" id="guest_name_new" value="" size="10"/></td>');
-        tr.append('<td><input type="text" id="guest_position_new" value="" size="10"/></td>');
-        tr.append('<td></td>');
-        tr.append('<td>' + '<input type="button" value="Add" onclick="add_guest()"' + '</td>');
-        tr.append('<td></td>');
-        $('#event-table').append(tr);
-      }
-    },
-    error: function(response){
-      alert('server error');
-    }
-  });
-});
+  <script type="text/template" id="players-template">
+    <div class="row text-left text-sm-center font-weight-bold">
+      <div class="col-2 col-md-1">#</div>
+      <div class="col-4 col-md-3 col-lg-4">Name</div>
+      <div class="col-4 col-md-3">Position</div>
+      <div class="col-2 col-md-1">Paid</div>
+      <div class="col-md-4 col-lg-3 d-none d-sm-block"></div>
+    </div>
+    <hr />
+    <% _.each( players, function( player, index ) { %>
+      <div class="row form-inline">
+        <div class="col-2 col-md-1"><label><%= index + 1 %></label></div>
+        <div class="col-4 col-md-3 col-lg-4"><label id="guest_name_<%= player.guest_id %>"><%= player.guest_name %></label></div>
+        <div class="col-4 col-md-3"><input class="form-control" type="text" id="guest_position_<%= player.guest_id %>" value="<%= player.guest_position %>" /></div>
+        <div class="col-2 col-md-1 text-center"><input class="form-control" type="checkbox" id="guest_paid_<%= player.guest_id %>" value="" <% if (player.guest_paid == 1) { %>checked<% } %> /></div>
+        <div class="col-12 col-md-4 col-lg-3 text-right text-md-left">
+          <div class="mt-3 d-block d-sm-none"></div>
+          <input type="button" class="btn btn-success" value="Update" onclick="update_guest(<%= player.guest_id %>)"/>
+          <input type="button" class="btn btn-danger" value="Remove" onclick="remove_guest(<%= player.guest_id %>)"/>
+        </div>
+      </div>
+      <hr />
+    <% }); %>
+    <div class="row form-inline">
+      <div class="col-2 col-md-1"><label>New</label></div>
+      <div class="col-4 col-md-3 col-lg-4"><input class="form-control" type="text" id="guest_name_new" value="" placeholder="Name" /></div>
+      <div class="col-4 col-md-3"><input class="form-control" type="text" id="guest_position_new" value="" placeholder="Position" /></div>
+      <div class="col-md-1 d-none d-sm-block"></div>
+      <div class="col-12 col-md-4 col-lg-3 text-right text-md-left">
+        <div class="mt-3 d-block d-sm-none"></div>
+        <input type="button" class="btn btn-success" value="Add player" onclick="add_guest()" />
+      </div>
+    </div>
   </script>
 
+  <script>
+    var template = _.template($( "#players-template" ).html());
+    $( "#players-template" ).remove();
+
+    function action_reload(json) {
+      $.ajax({type: "POST",
+        url: "cgi-bin/vb.cgi",
+        data: json,
+        success: function(response){
+          var result = JSON.parse(response);
+          if (result.status != 0) {
+            alert('error: ' + result.message);
+          } else {
+            window.location.reload();
+          }
+        },
+        error: function(response){
+          alert('server error');
+        }
+      });
+    }
+
+    function update_guest(guest_id) {
+      var name = $('#guest_name_' + guest_id).text();
+      if (confirm('Are you sure you want to update ' + name) ) {
+        var position = $('#guest_position_' + guest_id).val();
+        var paid = $('#guest_paid_' + guest_id).is(':checked') ? 1 : 0;
+
+        action_reload({
+          action: 'update_guest',
+          id: guest_id,
+          position: position,
+          is_paid: paid
+        });
+      }
+    }
+
+    function remove_guest(guest_id) {
+      var name = $('#guest_name_' + guest_id).text();
+      if (confirm('Are you sure you want to remove ' + name + '. This is permanent!')) {
+        action_reload({
+          action: 'remove_guest',
+          id: guest_id
+        });
+      }
+    }
+
+    function add_guest() {
+      var name = $('#guest_name_new').val();
+      var position = $('#guest_position_new').val();
+
+      action_reload({
+        action: 'add_guest',
+        event_id: 1,
+        name: name,
+        position: position
+      });
+    }
+
+    function renderEvent(players) {
+      $( "#events" ).html(template( {players: players} ));
+    }
+
+    $(document).ready(function() {
+
+      $.ajax({type: "POST",
+        url: "cgi-bin/vb.cgi",
+        data: {
+          action: 'event',
+          id: 1,
+        },
+        success: function(response){
+          var result = JSON.parse(response);
+          if (result.status != 0) {
+            alert('error');
+          } else {
+            if (result.message[0] != undefined) {
+              $('#event_date').text(result.message[0].date);
+              $('#event_location').text(result.message[0].location);
+              $('#payment_link').text('TBD');
+            }
+
+            renderEvent(response.message);
+          }
+        },
+        error: function(response){
+          alert('server error');
+        }
+      });
+    });
+  </script>
 
   <body>
-    <div id="content">
-      <div class="content-wrap">
-        <a href="events.html">Go to all events</a>
-
-        <hr>
-
-        <p>
-          Most recent event:
-            <strong>
-              <label id='event_date'>Loading...</label>
-              <label id='event_location'></label>
-            </strong>, 
-            pay here: <label id='payment_link'>Loading...</label>
-        </p>
-
-        <table id="event-table" class="table">
-          <thead>
-            <tr>
-              <th>Count</th>
-              <th>Name</th>
-              <th>Position</th>
-              <th>Paid?</th>
-              <th>Update</th>
-              <th>Remove</th>
-            </tr>
-          </thead>
-        </table>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10 offset-md-1 col-sm-12">
+          <div class="row">
+            <div class="col">
+              <p><a href="events.html">Go to all events</a></p>
+              <p>
+                Most recent event:
+                  <strong>
+                    <label id='event_date'>Loading...</label>
+                    <label id='event_location'></label>
+                  </strong>,
+                  pay here: <label id='payment_link'>Loading...</label>
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div id="events"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>
