@@ -31,12 +31,13 @@ assert "`QUERY_STRING=action=add_event\&date=1 ./vb.cgi`" '{"message": "Could no
 assert "`QUERY_STRING=action=add_event\&date=d\&location=loc ./vb.cgi`" '{"message": "Could not add an event, fields are missing", "status": 1}'
 assert "`QUERY_STRING=action=add_event\&payment_link=asdf ./vb.cgi`" '{"message": "Could not add an event, fields are missing", "status": 1}'
 assert "`QUERY_STRING=action=add_event\&date=event1\&location=loc1\&payment_link=tbd ./vb.cgi`" '{"message": "Event has been added", "status": 0}'
-assert "`QUERY_STRING=action=events ./vb.cgi`" '{"message": [{"date": "event1", "id": 1, "location": "loc1", "payment_link": "tbd"}], "status": 0}'
+assert "`QUERY_STRING=action=events ./vb.cgi`" \
+    '{"message": [{"date": "event1", "id": 1, "location": "loc1", "payment_link": "tbd", "primary": false}], "status": 0}'
 assert "`QUERY_STRING=action=add_event\&date=event2\&location=loc2\&payment_link=tbd ./vb.cgi`" '{"message": "Event has been added", "status": 0}'
 assert "`QUERY_STRING=action=add_event\&date=event3\&location=loc3\&payment_link=tbd ./vb.cgi`" '{"message": "Event has been added", "status": 0}'
-assert "`QUERY_STRING=action=events ./vb.cgi`" '{"message": [{"date": "event3", "id": 3, "location": "loc3", "payment_link": "tbd"}, '`
-                                               `'{"date": "event2", "id": 2, "location": "loc2", "payment_link": "tbd"}, '`
-                                               `'{"date": "event1", "id": 1, "location": "loc1", "payment_link": "tbd"}], "status": 0}'
+assert "`QUERY_STRING=action=events ./vb.cgi`" '{"message": [{"date": "event3", "id": 3, "location": "loc3", "payment_link": "tbd", "primary": false}, '`
+                                               `'{"date": "event2", "id": 2, "location": "loc2", "payment_link": "tbd", "primary": false}, '`
+                                               `'{"date": "event1", "id": 1, "location": "loc1", "payment_link": "tbd", "primary": false}], "status": 0}'
 
 echo "Testing update event...."
 assert "`QUERY_STRING=action=update_event ./vb.cgi`" '{"message": "Could not update an event, fields are missing", "status": 1}'
@@ -45,9 +46,9 @@ assert "`QUERY_STRING=action=update_event\&id=99999\&date=event3\&location=loc3\
   '{"message": "Could not find an event to update", "status": 1}'
 assert "`QUERY_STRING=action=update_event\&id=3\&date=event33\&location=loc33\&payment_link=pay33 ./vb.cgi`" \
   '{"message": "Event has been updated", "status": 0}'
-assert "`QUERY_STRING=action=events ./vb.cgi`" '{"message": [{"date": "event33", "id": 3, "location": "loc33", "payment_link": "pay33"}, '`
-                                               `'{"date": "event2", "id": 2, "location": "loc2", "payment_link": "tbd"}, '`
-                                               `'{"date": "event1", "id": 1, "location": "loc1", "payment_link": "tbd"}], "status": 0}'
+assert "`QUERY_STRING=action=events ./vb.cgi`" '{"message": [{"date": "event33", "id": 3, "location": "loc33", "payment_link": "pay33", "primary": false}, '`
+                                               `'{"date": "event2", "id": 2, "location": "loc2", "payment_link": "tbd", "primary": false}, '`
+                                               `'{"date": "event1", "id": 1, "location": "loc1", "payment_link": "tbd", "primary": false}], "status": 0}'
 
 echo "Testing add_guest...."
 assert "`QUERY_STRING=action=add_guest ./vb.cgi`" '{"message": "Could not add a guest, fields are missing", "status": 1}'
@@ -111,5 +112,7 @@ assert "`QUERY_STRING=action=event\&id=2 ./vb.cgi`" '{"message": [{"date": "even
                                                                  `'"location": "loc2"}], "status": 0}'
 
 echo "TODO: Testing update_guest....."
+
+echo "TODO: Primary event....."
 
 echo "SUCCESS"

@@ -38,6 +38,12 @@ class VolleyDB:
                             AND length("payment_link") <= 128));""")
 
             self.__cursor.execute("""
+                create table if not exists "primary_event" (
+                    id integer primary key check (id = 0),
+                    event_id integer not null,
+                    foreign key(event_id) references events(id));""")
+
+            self.__cursor.execute("""
                 create table if not exists "guests" (
                     id integer primary key autoincrement,
                     event_id integer not null,
@@ -55,8 +61,8 @@ class VolleyDB:
 
     def getEvents(self):
         events = []
-        for row in self.__cursor.execute('select id,date,location,payment_link from events order by id desc'):
-            events.append({'id':row[0], 'date':row[1], 'location':row[2], 'payment_link':row[3]})
+        for row in self.__cursor.execute('select events.id, events.date, events.location, events.payment_link, (primary_event.event_id==events.id) from events left join primary_event on primary_event.event_id=events.id order by events.id desc limit 20'):
+            events.append({'id':row[0], 'date':row[1], 'location':row[2], 'payment_link':row[3], 'primary': (row[4] == 1)})
         return events
 
     def addEvent(self, date, location, payment_link):
@@ -67,6 +73,12 @@ class VolleyDB:
     def updateEvent(self, id, date, location, payment_link):
         with self.__connection:
             self.__cursor.execute('update events set date=?, location=?, payment_link=? where id=?', (date, location, payment_link, id))
+            self.__connection.commit()
+            return self.__cursor.rowcount == 1
+
+    def setPrimaryEvent(self, event_id):
+        with self.__connection:
+            self.__cursor.execute('insert or replace into primary_event (id, event_id) values(0,?)', (event_id,))
             self.__connection.commit()
             return self.__cursor.rowcount == 1
 
@@ -131,6 +143,14 @@ def action(form):
                     return return_success('Event has been updated')
                 else:
                     return return_error('Could not find an event to update')
+        elif action == 'set_primary_event':
+            if 'id' not in form:
+                return return_error('Could not update primary event, fields are missing.')
+            with VolleyDB(db_name) as db:
+                if db.setPrimaryEvent(form.getfirst('id')):
+                    return return_success('Primary event has been updated.')
+                else:
+                    return return_error('Could not update a primary event.')
         elif action == 'update_guest':
             if 'id' not in form or 'position' not in form or 'is_paid' not in form:
                 return return_error('Could not update a guest, fields are missing')

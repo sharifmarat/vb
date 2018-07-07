@@ -44,7 +44,10 @@ function add_event() {
 }
 
 function set_primary_event(event_id) {
-  alert('Not implemented yet');
+  action_reload({
+    action: 'set_primary_event',
+    id: event_id
+  });
 }
 
 $(document).ready(function() {
@@ -67,7 +70,11 @@ $(document).ready(function() {
           tr.append('<td><input type="text" id="event_location_' + event_id + '" value="' + result.message[i].location + '" size="10"/></td>');
           tr.append('<td><input type="text" id="event_payment_' + event_id + '" value="' + result.message[i].payment_link + '" size="10"/></td>');
           tr.append('<td><input type="button" value="Update" onclick="update_event(' + event_id + ')"/></td>');
-          tr.append('<td><input type="button" value="Set as primary" onclick="set_primary_event(' + event_id + ')"/></td>');
+          if (result.message[i].primary) {
+            tr.append('<td>Primary</td>');
+          } else {
+            tr.append('<td><input type="button" value="Set as primary" onclick="set_primary_event(' + event_id + ')"/></td>');
+          }
           $('#events-table').append(tr);
         }
         tr = $('<tr/>');
