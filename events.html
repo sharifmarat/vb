@@ -1,1 +1,116 @@
-WORK IN PROGRESS...
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Let's volleyball</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="css/main.css?v=1.0.2">
+    <script src="js/jquery-2.2.3.min.js"></script>
+    <script src="js/vb.js"></script>
+  </head>
+
+  <script>
+
+function update_event(event_id) {
+  var event_date = $('#event_date_' + event_id).text();
+  var loc = $('#event_location_' + event_id).val();
+  var payment = $('#event_payment_' + event_id).val();
+
+  var p = prompt('Type YES to update event ' + event_date + ' in ' + loc);
+  if (p == null) {
+    return;
+  }
+  if (p != 'YES') {
+    alert('Update failed. You had to type YES.');
+    return;
+  }
+
+  action_reload({
+    action: 'update_event',
+    id: event_id,
+    date: event_date,
+    location: loc,
+    payment_link: payment
+  });
+}
+
+function add_event() {
+  action_reload({
+    action: 'add_event',
+    date: $('#event_date_new').val(),
+    location: $('#event_location_new').val(),
+    payment_link: $('#event_payment_new').val()
+  });
+}
+
+function set_primary_event(event_id) {
+  alert('Not implemented yet');
+}
+
+$(document).ready(function() {
+  $.ajax({type: "POST",
+    url: "cgi-bin/vb.cgi",
+    data: {
+      action: 'events'
+    },
+    success: function(response){
+      var result = JSON.parse(response);
+      if (result.status != 0) {
+        alert('error: ' + result.message);
+      } else {
+        var tr;
+        for (var i = 0; i < result.message.length; ++i) {
+          var event_id = result.message[i].id;
+
+          tr = $('<tr/>');
+          tr.append('<td><label id="event_date_' + event_id + '">' + result.message[i].date + '</label></td>');
+          tr.append('<td><input type="text" id="event_location_' + event_id + '" value="' + result.message[i].location + '" size="10"/></td>');
+          tr.append('<td><input type="text" id="event_payment_' + event_id + '" value="' + result.message[i].payment_link + '" size="10"/></td>');
+          tr.append('<td><input type="button" value="Update" onclick="update_event(' + event_id + ')"/></td>');
+          tr.append('<td><input type="button" value="Set as primary" onclick="set_primary_event(' + event_id + ')"/></td>');
+          $('#events-table').append(tr);
+        }
+        tr = $('<tr/>');
+        tr.append('<td><input type="text" id="event_date_new" value="" placeholder="Date" size="10"/></td>');
+        tr.append('<td><input type="text" id="event_location_new" value="" placeholder="Location" size="10"/></td>');
+        tr.append('<td><input type="text" id="event_payment_new" value="" placeholder="Payment URL" size="10"/></td>');
+        tr.append('<td>' + '<input type="button" value="Add" onclick="add_event()"' + '</td>');
+        tr.append('<td></td>');
+        $('#events-table').append(tr);
+      }
+    },
+    error: function(response){
+      alert('server error');
+    }
+  });
+});
+  </script>
+
+  <body>
+    <div id="content">
+      <div class="content-wrap">
+
+        <a href="index.html">Go to a primary event</a>
+
+        <hr>
+
+        <p>
+          List of most recent events. Events are clickable. A primary event is displayed on the <a href="index.html">main page</a>.<br>
+        </p>
+
+        <table id="events-table" class="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Payment</th>
+              <th>Update</th>
+              <th>Primary</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </body>
+
+</html>

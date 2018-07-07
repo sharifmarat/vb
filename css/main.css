@@ -166,4 +166,11 @@ hr {
   #event-table td:nth-of-type(4):before { content: "Paid?"; }
   #event-table td:nth-of-type(5):before { content: ""; }
   #event-table td:nth-of-type(6):before { content: ""; }
+
+  #events-table td:nth-of-type(1):before { content: "Date"; }
+  #events-table td:nth-of-type(2):before { content: "Location"; }
+  #events-table td:nth-of-type(3):before { content: "Payment"; }
+  #events-table td:nth-of-type(4):before { content: ""; }
+  #events-table td:nth-of-type(5):before { content: ""; }
 }
+

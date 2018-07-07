@@ -6,27 +6,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
     <link rel="stylesheet" href="css/main.css?v=1.0.2">
     <script src="js/jquery-2.2.3.min.js"></script>
+    <script src="js/vb.js"></script>
   </head>
 
   <script>
-
-function action_reload(json) {
-  $.ajax({type: "POST",
-    url: "cgi-bin/vb.cgi",
-    data: json,
-    success: function(response){
-      var result = JSON.parse(response);
-      if (result.status != 0) {
-        alert('error: ' + result.message);
-      } else {
-        window.location.reload();
-      }
-    },
-    error: function(response){
-      alert('server error');
-    }
-  });
-}
 
 function update_guest(guest_id) {
   var name = $('#guest_name_' + guest_id).text();
@@ -137,7 +120,7 @@ $(document).ready(function() {
         <hr>
 
         <p>
-          Most recent event:
+          A primary event:
             <strong>
               <label id='event_date'>Loading...</label>
               <label id='event_location'></label>
