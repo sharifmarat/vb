@@ -66,5 +66,4 @@ And now open `localhost:8000` in browser.
 
 ### Limitations and TODO
 
-- Event id is hard-coded in `index.html`. It should pass `last` to DB API.
-- List of events is not available. It should be similar to list of guests. It would be possible to add/delete/update events there.
+- Event id is hard-coded in `index.html`. It should pass nothing to DB API and a primary event should be used.
