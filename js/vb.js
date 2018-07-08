@@ -16,3 +16,17 @@ function action_reload(json) {
   });
 }
 
+function get_query_value(key)
+{
+  var query = window.location.search.substring(1);
+  var pairs = query.split("&");
+  for (var i = 0; i < pairs.length; i++) {
+    var key_value = pairs[i].split("=");
+    if (key_value[0] == key) {
+      return key_value[1];
+    }
+  }
+
+  return "";
+}
+

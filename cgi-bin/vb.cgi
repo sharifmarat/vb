@@ -84,7 +84,11 @@ class VolleyDB:
 
     def addGuest(self, event_id, guest_name, position):
         with self.__connection:
-            self.__cursor.execute('insert into guests (event_id, name, position, is_paid) values(?,?,?,?)', (event_id, guest_name, position, 0))
+            if event_id is not None:
+                self.__cursor.execute('insert into guests (event_id, name, position, is_paid) values(?,?,?,0)', (event_id, guest_name, position))
+            else:
+                self.__cursor.execute('insert into guests (event_id, name, position, is_paid) values((select event_id from primary_event),?,?,0)',
+                                      (guest_name, position))
 
     def removeGuest(self, guest_id):
         with self.__connection:
@@ -100,8 +104,22 @@ class VolleyDB:
 
     def getEvent(self, event_id):
         guests = []
-        for row in self.__cursor.execute('select events.date, events.location, events.payment_link, guests.id, guests.name, guests.position, guests.is_paid from guests inner join events on events.id = guests.event_id where events.id=? order by guests.id', (event_id,)):
-            guests.append({'date':row[0], 'location':row[1], 'payment_link': row[2], 'guest_id':row[3], 'guest_name':row[4], 'guest_position':row[5], 'guest_paid':row[6]})
+        query = 'select events.date, events.location, events.payment_link, guests.id, guests.name, guests.position, guests.is_paid from guests inner join events on events.id = guests.event_id'
+        params = ()
+        if event_id is None:
+          query += '  inner join primary_event on primary_event.event_id = events.id';
+        else:
+          query += ' where events.id=?'
+          params = (event_id,)
+        query += ' order by guests.id limit 100' # TODO, customize the limit
+        for row in self.__cursor.execute(query, params):
+            guests.append({'date':row[0],
+                           'location':row[1],
+                           'payment_link': row[2],
+                           'guest_id':row[3],
+                           'guest_name':row[4],
+                           'guest_position':row[5],
+                           'guest_paid':row[6]})
         return guests
 
 def is_debug():
@@ -147,10 +165,11 @@ def action(form):
             if 'id' not in form:
                 return return_error('Could not update primary event, fields are missing.')
             with VolleyDB(db_name) as db:
-                if db.setPrimaryEvent(form.getfirst('id')):
+                try:
+                    db.setPrimaryEvent(form.getfirst('id'))
                     return return_success('Primary event has been updated.')
-                else:
-                    return return_error('Could not update a primary event.')
+                except sqlite3.IntegrityError as e:
+                    return return_error('Could set such an event as primary.')
         elif action == 'update_guest':
             if 'id' not in form or 'position' not in form or 'is_paid' not in form:
                 return return_error('Could not update a guest, fields are missing')
@@ -160,11 +179,12 @@ def action(form):
                 else:
                     return return_error('Could not find a guest')
         elif action == 'add_guest':
-            if 'event_id' not in form or 'name' not in form or 'position' not in form:
+            if 'name' not in form or 'position' not in form:
                 return return_error('Could not add a guest, fields are missing')
+            event_id = form.getfirst('event_id') if 'event_id' in form else None
             with VolleyDB(db_name) as db:
                 try:
-                    db.addGuest(form.getfirst('event_id'), form.getfirst('name'), form.getfirst('position'))
+                    db.addGuest(event_id, form.getfirst('name'), form.getfirst('position'))
                     return return_success('Guest has been added')
                 except sqlite3.IntegrityError as e:
                     return return_error('Could not add guest for such event')
@@ -178,10 +198,9 @@ def action(form):
                 except sqlite3.IntegrityError as e:
                     return return_error('Could not remove guest')
         elif action == 'event':
-            if 'id' not in form:
-                return return_error('Could not get event, id is not provided')
+            event_id = form.getfirst('id') if 'id' in form else None
             with VolleyDB(db_name) as db:
-                event = db.getEvent(form.getfirst('id'))
+                event = db.getEvent(event_id)
                 return return_success(event)
         else:
             return return_error('Configuration error, unknown action.')

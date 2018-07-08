@@ -91,7 +91,7 @@ function add_guest() {
 
   action_reload({
     action: 'add_guest',
-    event_id: 1,
+    event_id: get_query_value('event_id'),
     name: name,
     position: position
   });
@@ -102,7 +102,7 @@ $(document).ready(function() {
     url: "cgi-bin/vb.cgi",
     data: {
       action: 'event',
-      id: 1,
+      id: get_query_value('event_id')
     },
     success: function(response){
       var result = JSON.parse(response);
