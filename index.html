@@ -10,142 +10,103 @@
     <script src="js/underscore-min.js"></script>
     <script src="js/vb.js"></script>
   </head>
-
   <script type="text/template" id="players-template">
-    <div class="row text-left text-sm-center font-weight-bold">
+    <div class="row text-left font-weight-bold">
       <div class="col-2 col-md-1">#</div>
       <div class="col-4 col-md-3 col-lg-4">Name</div>
       <div class="col-4 col-md-3">Position</div>
-      <div class="col-2 col-md-1">Paid</div>
-      <div class="col-md-4 col-lg-3 d-none d-sm-block"></div>
+      <div class="col-2 col-md-1 text-center">Paid</div>
+      <div class="col-md-4 col-lg-3 d-none d-md-block"></div>
     </div>
-    <hr />
     <% _.each( players, function( player, index ) { %>
-      <div class="row form-inline">
+      <hr />
+      <div class="row form-inline text-left">
         <div class="col-2 col-md-1"><label><%= index + 1 %></label></div>
         <div class="col-4 col-md-3 col-lg-4"><label id="guest_name_<%= player.guest_id %>"><%= player.guest_name %></label></div>
         <div class="col-4 col-md-3"><input class="form-control" type="text" id="guest_position_<%= player.guest_id %>" value="<%= player.guest_position %>" /></div>
-        <div class="col-2 col-md-1 text-center"><input class="form-control" type="checkbox" id="guest_paid_<%= player.guest_id %>" value="" <% if (player.guest_paid == 1) { %>checked<% } %> /></div>
-        <div class="col-12 col-md-4 col-lg-3 text-left">
-          <div class="mt-3 d-block d-sm-none"></div>
+        <div class="col-2 col-md-1"><input class="form-control" type="checkbox" id="guest_paid_<%= player.guest_id %>" value="" <% if (player.guest_paid == 1) { %>checked<% } %> /></div>
+        <div class="col-12 col-md-4 col-lg-3 text-right text-md-left">
+          <div class="mt-3 d-block d-md-none"></div>
           <input type="button" class="btn btn-success" value="Update" onclick="update_guest(<%= player.guest_id %>)"/>
           <input type="button" class="btn btn-danger" value="Remove" onclick="remove_guest(<%= player.guest_id %>)"/>
         </div>
       </div>
-      <hr />
     <% }); %>
+    <hr class="bold" />
     <div class="row form-inline">
-      <div class="col-2 col-md-1"><label>New</label></div>
+      <div class="col-2 col-md-1"><label><b>New</b></label></div>
       <div class="col-4 col-md-3 col-lg-4"><input class="form-control" type="text" id="guest_name_new" value="" placeholder="Name" /></div>
       <div class="col-4 col-md-3"><input class="form-control" type="text" id="guest_position_new" value="" placeholder="Position" /></div>
-      <div class="col-md-1 d-none d-sm-block"></div>
+      <div class="col-2 col-md-1"><input class="form-control" type="checkbox" disabled /></div>
       <div class="col-12 col-md-4 col-lg-3 text-right text-md-left">
-        <div class="mt-3 d-block d-sm-none"></div>
+        <div class="mt-3 d-block d-md-none"></div>
         <input type="button" class="btn btn-success" value="Add player" onclick="add_guest()" />
       </div>
     </div>
   </script>
-
   <script>
     var template = _.template($( "#players-template" ).html());
     $( "#players-template" ).remove();
-  </script>
 
-  <script>
+    $(document).ready(function() {
+      $.ajax({type: "POST",
+        url: apiLink,
+        data: {
+          action: 'event',
+          id: 1,
+        },
+        success: function(response){
+          var result = JSON.parse(response);
+          if (result.status != 0) {
+            alert('error');
+          } else {
+            if (result.message[0] != undefined) {
+              $('#event_date').text(result.message[0].date);
+              $('#event_location').text(result.message[0].location);
+              // update both text and href attribute
+              $('#payment_link').text(result.message[0].payment_link);
+              $('#payment_link').attr('href', result.message[0].payment_link);
+            }
 
-function update_guest(guest_id) {
-  var name = $('#guest_name_' + guest_id).text();
-
-  if (confirm('Are you sure you want to update ' + name)) {
-    var position = $('#guest_position_' + guest_id).val();
-    var paid = $('#guest_paid_' + guest_id).is(':checked') ? 1 : 0;
-
-    action_reload({
-      action: 'update_guest',
-      id: guest_id,
-      position: position,
-      is_paid: paid
-    });
-  }
-}
-
-function remove_guest(guest_id) {
-  var name = $('#guest_name_' + guest_id).text();
-  var p = prompt('Type yes to remove ' + name + '. This is permanent!');
-  if (p == null) {
-    return;
-  }
-  if (p.toUpperCase() != 'YES') {
-    alert('Remove failed. You had to type yes to remove.');
-    return;
-  }
-  action_reload({
-    action: 'remove_guest',
-    id: guest_id
-  });
-}
-
-function add_guest() {
-  var name = $('#guest_name_new').val();
-  var position = $('#guest_position_new').val();
-
-  action_reload({
-    action: 'add_guest',
-    event_id: 1,
-    name: name,
-    position: position
-  });
-}
-
-$(document).ready(function() {
-  $.ajax({type: "POST",
-    url: "cgi-bin/vb.cgi",
-    data: {
-      action: 'event',
-      id: 1,
-    },
-    success: function(response){
-      var result = JSON.parse(response);
-      if (result.status != 0) {
-        alert('error');
-      } else {
-        if (result.message[0] != undefined) {
-          $('#event_date').text(result.message[0].date);
-          $('#event_location').text(result.message[0].location);
-          $('#payment_link').text(result.message[0].payment_link);
+            $( "#players" ).html(template( {players: result.message} ));
+          }
+        },
+        error: function(response){
+          alert('server error');
         }
-
-        $( "#events" ).html(template( {players: result.message} ));
-      }
-    },
-    error: function(response){
-      alert('server error');
-    }
-  });
-});
+      });
+    });
   </script>
-
-
   <body>
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-md-10 offset-md-1 col-sm-12">
           <div class="row">
+              <nav class="navbar col bg-light">
+                <span class="navbar-brand">Let's volleyball</span>
+                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                    <a class="nav-link" href="events.html">All events</a>
+                  </li>
+                </ul>
+              </nav>
+          </div>
+          <div class="row">
             <div class="col">
-              <p><a href="events.html">Go to all events</a></p>
               <p>
                 Most recent event:
                   <strong>
                     <label id='event_date'>Loading...</label>
                     <label id='event_location'></label>
-                  </strong>,
-                  pay here: <label id='payment_link'>Loading...</label>
+                  </strong>
+                  <br />
+                  Pay here: <a href="#" id='payment_link' target="_blank">Loading...</a>
               </p>
             </div>
           </div>
           <div class="row">
             <div class="col">
-              <div id="events"></div>
+              <div id="players"></div>
             </div>
           </div>
         </div>
