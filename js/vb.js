@@ -51,13 +51,13 @@ function remove_guest(guest_id) {
   });
 }
 
-function add_guest() {
+function add_guest(event_id) {
   var name = $('#guest_name_new').val();
   var position = $('#guest_position_new').val();
 
   action_reload({
     action: 'add_guest',
-    event_id: 1,
+    event_id: event_id,
     name: name,
     position: position
   });
@@ -95,3 +95,18 @@ function set_primary_event(event_id) {
     id: event_id
   });
 }
+
+function get_query_value(key)
+{
+  var query = window.location.search.substring(1);
+  var pairs = query.split("&");
+  for (var i = 0; i < pairs.length; i++) {
+    var key_value = pairs[i].split("=");
+    if (key_value[0] == key) {
+      return key_value[1];
+    }
+  }
+
+  return "";
+}
+

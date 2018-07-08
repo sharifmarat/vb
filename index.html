@@ -40,7 +40,7 @@
       <div class="col-2 col-md-1"><input class="form-control" type="checkbox" disabled /></div>
       <div class="col-12 col-md-4 col-lg-3 text-right text-md-left">
         <div class="mt-3 d-block d-md-none"></div>
-        <input type="button" class="btn btn-success" value="Add player" onclick="add_guest()" />
+        <input type="button" class="btn btn-success" value="Add player" onclick="add_guest(get_query_value('event_id'))" />
       </div>
     </div>
   </script>
@@ -53,7 +53,7 @@
         url: apiLink,
         data: {
           action: 'event',
-          id: 1,
+          id: get_query_value('event_id')
         },
         success: function(response){
           var result = JSON.parse(response);
