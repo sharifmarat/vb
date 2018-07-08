@@ -104,6 +104,12 @@ $(document).ready(function() {
       if (result.status != 0) {
         alert('error');
       } else {
+        if (result.message[0] != undefined) {
+          $('#event_date').text(result.message[0].date);
+          $('#event_location').text(result.message[0].location);
+          $('#payment_link').text('TBD');
+        }
+
         $( "#events" ).html(template( {players: result.message} ));
       }
     },
