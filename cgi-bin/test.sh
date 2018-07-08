@@ -73,25 +73,28 @@ assert "`QUERY_STRING=action=event\&id=9999 ./vb.cgi`" '{"message": [], "status"
 assert "`QUERY_STRING=action=event\&id=1 ./vb.cgi`" '{"message": [], "status": 0}'
 assert "`QUERY_STRING=action=event\&id=3 ./vb.cgi`" '{"message": [{"date": "event33", "guest_id": 4, '`
                                                     `'"guest_name": "g1_3", "guest_paid": 0, '`
-                                                    `'"guest_position": "pos3_3", "location": "loc33"}], "status": 0}'
+                                                    `'"guest_position": "pos3_3", "location": "loc33", "payment_link": "pay33"}], "status": 0}'
 assert "`QUERY_STRING=action=event\&id=2 ./vb.cgi`" '{"message": [{"date": "event2", '`
                                                                  `'"guest_id": 1, '`
                                                                  `'"guest_name": "g1", '`
                                                                  `'"guest_paid": 0, '`
                                                                  `'"guest_position": "pos1", '`
-                                                                 `'"location": "loc2"}, '`
+                                                                 `'"location": "loc2", '`
+                                                                 `'"payment_link": "tbd"}, '`
                                                                  `'{"date": "event2", '`
                                                                  `'"guest_id": 2, '`
                                                                  `'"guest_name": "g2", '`
                                                                  `'"guest_paid": 0, '`
                                                                  `'"guest_position": "pos2", '`
-                                                                 `'"location": "loc2"}, '`
+                                                                 `'"location": "loc2", '`
+                                                                 `'"payment_link": "tbd"}, '`
                                                                  `'{"date": "event2", '`
                                                                  `'"guest_id": 3, '`
                                                                  `'"guest_name": "g3", '`
                                                                  `'"guest_paid": 0, '`
                                                                  `'"guest_position": "pos3", '`
-                                                                 `'"location": "loc2"}], "status": 0}'
+                                                                 `'"location": "loc2", '`
+                                                                 `'"payment_link": "tbd"}], "status": 0}'
 
 echo "Testing removing guest...."
 assert "`QUERY_STRING=action=remove_guest ./vb.cgi`" '{"message": "Could not remove a guest, fields are missing", "status": 1}'
@@ -103,13 +106,15 @@ assert "`QUERY_STRING=action=event\&id=2 ./vb.cgi`" '{"message": [{"date": "even
                                                                  `'"guest_name": "g1", '`
                                                                  `'"guest_paid": 0, '`
                                                                  `'"guest_position": "pos1", '`
-                                                                 `'"location": "loc2"}, '`
+                                                                 `'"location": "loc2", '`
+                                                                 `'"payment_link": "tbd"}, '`
                                                                  `'{"date": "event2", '`
                                                                  `'"guest_id": 3, '`
                                                                  `'"guest_name": "g3", '`
                                                                  `'"guest_paid": 0, '`
                                                                  `'"guest_position": "pos3", '`
-                                                                 `'"location": "loc2"}], "status": 0}'
+                                                                 `'"location": "loc2", '`
+                                                                 `'"payment_link": "tbd"}], "status": 0}'
 
 echo "TODO: Testing update_guest....."
 

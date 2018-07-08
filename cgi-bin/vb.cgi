@@ -100,8 +100,8 @@ class VolleyDB:
 
     def getEvent(self, event_id):
         guests = []
-        for row in self.__cursor.execute('select events.date, events.location, guests.id, guests.name, guests.position, guests.is_paid from guests inner join events on events.id = guests.event_id where events.id=? order by guests.id', (event_id,)):
-            guests.append({'date':row[0], 'location':row[1], 'guest_id':row[2], 'guest_name':row[3], 'guest_position':row[4], 'guest_paid':row[5]})
+        for row in self.__cursor.execute('select events.date, events.location, events.payment_link, guests.id, guests.name, guests.position, guests.is_paid from guests inner join events on events.id = guests.event_id where events.id=? order by guests.id', (event_id,)):
+            guests.append({'date':row[0], 'location':row[1], 'payment_link': row[2], 'guest_id':row[3], 'guest_name':row[4], 'guest_position':row[5], 'guest_paid':row[6]})
         return guests
 
 def is_debug():
