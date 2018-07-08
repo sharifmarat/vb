@@ -34,11 +34,13 @@ Env var `VOLLEY_DEBUG` enables debugging.
 
 `action=update_event&id=3&date=d&location=l3&payment_link=p` - Updates an event.
 
-`action=add_guest&event_id=3&name=n&position=pos` - Adds an event.
+`action=add_guest&event_id=3&name=n&position=pos` - Adds an event. If `event_id` is not set, a guest is added to a primary event.
 
-`action=event&id=3` - Returns an event with all guests.
+`action=event&id=3` - Returns an event with all guests. If `id` is not provided a primary event is used.
 
 `action=remove_guest&id=2` - To remove a guest.
+
+`action=set_primary_event&id=2` - Set a primary event. A primary event is the one which is displayed at `index.html`.
 
 In short a reply to every request fits `{"message": XXX, "status":0}`.  
 `status=0` is on success and `message` contains corresponding data.  
@@ -64,6 +66,8 @@ VOLLEY_DB=cgi-bin/vb.sqlite python3 -m http.server --bind localhost --cgi 8000
 
 And now open `localhost:8000` in browser.
 
-### Limitations and TODO
+### TODO
 
-- Event id is hard-coded in `index.html`. It should pass nothing to DB API and a primary event should be used.
+- `/?event_id=1` or `/index.html` does not display any event data if no guests are assigned.
+At least one guest should be assigned before it's properly displayed.
+- Make an event clickable on `/events.html`.
