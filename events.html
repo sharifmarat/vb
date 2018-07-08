@@ -4,120 +4,99 @@
     <meta name="viewport" content="width=device-width">
     <title>Let's volleyball</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="css/main.css?v=1.0.2">
     <script src="js/jquery-2.2.3.min.js"></script>
+    <script src="js/underscore-min.js"></script>
     <script src="js/vb.js"></script>
   </head>
-
-  <script>
-
-function update_event(event_id) {
-  var event_date = $('#event_date_' + event_id).text();
-  var loc = $('#event_location_' + event_id).val();
-  var payment = $('#event_payment_' + event_id).val();
-
-  var p = prompt('Type YES to update event ' + event_date + ' in ' + loc);
-  if (p == null) {
-    return;
-  }
-  if (p != 'YES') {
-    alert('Update failed. You had to type YES.');
-    return;
-  }
-
-  action_reload({
-    action: 'update_event',
-    id: event_id,
-    date: event_date,
-    location: loc,
-    payment_link: payment
-  });
-}
-
-function add_event() {
-  action_reload({
-    action: 'add_event',
-    date: $('#event_date_new').val(),
-    location: $('#event_location_new').val(),
-    payment_link: $('#event_payment_new').val()
-  });
-}
-
-function set_primary_event(event_id) {
-  action_reload({
-    action: 'set_primary_event',
-    id: event_id
-  });
-}
-
-$(document).ready(function() {
-  $.ajax({type: "POST",
-    url: "cgi-bin/vb.cgi",
-    data: {
-      action: 'events'
-    },
-    success: function(response){
-      var result = JSON.parse(response);
-      if (result.status != 0) {
-        alert('error: ' + result.message);
-      } else {
-        var tr;
-        for (var i = 0; i < result.message.length; ++i) {
-          var event_id = result.message[i].id;
-
-          tr = $('<tr/>');
-          tr.append('<td><label id="event_date_' + event_id + '">' + result.message[i].date + '</label></td>');
-          tr.append('<td><input type="text" id="event_location_' + event_id + '" value="' + result.message[i].location + '" size="10"/></td>');
-          tr.append('<td><input type="text" id="event_payment_' + event_id + '" value="' + result.message[i].payment_link + '" size="10"/></td>');
-          tr.append('<td><input type="button" value="Update" onclick="update_event(' + event_id + ')"/></td>');
-          if (result.message[i].primary) {
-            tr.append('<td>Primary</td>');
-          } else {
-            tr.append('<td><input type="button" value="Set as primary" onclick="set_primary_event(' + event_id + ')"/></td>');
-          }
-          $('#events-table').append(tr);
-        }
-        tr = $('<tr/>');
-        tr.append('<td><input type="text" id="event_date_new" value="" placeholder="Date" size="10"/></td>');
-        tr.append('<td><input type="text" id="event_location_new" value="" placeholder="Location" size="10"/></td>');
-        tr.append('<td><input type="text" id="event_payment_new" value="" placeholder="Payment URL" size="10"/></td>');
-        tr.append('<td>' + '<input type="button" value="Add" onclick="add_event()"' + '</td>');
-        tr.append('<td></td>');
-        $('#events-table').append(tr);
-      }
-    },
-    error: function(response){
-      alert('server error');
-    }
-  });
-});
+  <script type="text/template" id="events-template">
+    <div class="row font-weight-bold">
+      <div class="col-4 col-lg-2">Date</div>
+      <div class="col-4 col-lg-3">Location</div>
+      <div class="col-4 col-lg-3">Payment</div>
+      <div class="col-12 col-lg-4 d-none d-lg-block"></div>
+    </div>
+    <% _.each( events, function( event, index ) { %>
+      <hr />
+      <div class="row form-inline">
+        <div class="col-4 col-lg-2"><label id="event_date_<%= event.id %>"><%= event.date %></label></div>
+        <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_location_<%= event.id %>" value="<%= event.location %>" /></div>
+        <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_payment_<%= event.id %>" value="<%= event.payment_link %>" /></div>
+        <div class="col-12 col-lg-4 text-right text-lg-left">
+          <div class="mt-3 d-block d-lg-none"></div>
+          <input type="button" class="btn btn-success" value="Update" onclick="update_event(<%= event.id %>)"/>
+          <% if (event.primary == true) { %>
+            <input type="button" class="btn" value="Primary" disabled/>
+          <% } else { %>
+            <input type="button" class="btn btn-primary" value="Set as primary" onclick="set_primary_event(<%= event.id %>)"/>
+          <% } %>
+        </div>
+      </div>
+    <% }); %>
+    <hr class="bold" />
+    <div class="row form-inline">
+      <div class="col-4 col-lg-2"><input type="text" class="form-control" id="event_date_new" value="" placeholder="Date" /></div>
+      <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_location_new" value="" placeholder="Location" /></div>
+      <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_payment_new" value="" placeholder="Payment URL" /></div>
+      <div class="col-12 col-lg-4 text-right text-lg-left">
+        <div class="mt-3 d-block d-lg-none"></div>
+        <input type="button" class="btn btn-success" value="Add event" onclick="add_event()"/>
+      </div>
+    </div>
   </script>
+  <script>
+    var template = _.template($( "#events-template" ).html());
+    $( "#events-template" ).remove();
 
+    $(document).ready(function() {
+      $.ajax({type: "POST",
+        url: apiLink,
+        data: {
+          action: 'events'
+        },
+        success: function(response){
+          var result = JSON.parse(response);
+          if (result.status != 0) {
+            alert('error: ' + result.message);
+          } else {
+            $( "#events" ).html(template( {events: result.message} ));
+          }
+        },
+        error: function(response){
+          alert('server error');
+        }
+      });
+    });
+  </script>
   <body>
-    <div id="content">
-      <div class="content-wrap">
-
-        <a href="index.html">Go to a primary event</a>
-
-        <hr>
-
-        <p>
-          List of most recent events. Events are clickable. A primary event is displayed on the <a href="index.html">main page</a>.<br>
-        </p>
-
-        <table id="events-table" class="table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Location</th>
-              <th>Payment</th>
-              <th>Update</th>
-              <th>Primary</th>
-            </tr>
-          </thead>
-        </table>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-10 offset-md-1 col-sm-12">
+          <div class="row">
+              <nav class="navbar col bg-light">
+                <span class="navbar-brand">Let's volleyball</span>
+                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                    <a class="nav-link" href="index.html">Primary event</a>
+                  </li>
+                </ul>
+              </nav>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p>
+                List of most recent events. Events are clickable. A primary event is displayed on the <a href="index.html">main page</a>.<br>
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div id="events"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>
-
 </html>
