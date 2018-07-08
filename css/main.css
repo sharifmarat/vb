@@ -1,3 +1,6 @@
+.form-inline .form-control {
+  width: 100%;
+}
 
 h1, h2, h3, h4, h5, h6, p, body, a, img, ul, ol, blockquote, pre {
   margin: 0; padding: 0; border: 0;
@@ -132,8 +135,8 @@ hr {
     font-size: 1em;
   }
 
-  .table, .table thead, .table tbody, .table th, .table td, .table tr { 
-    display: block; 
+  .table, .table thead, .table tbody, .table th, .table td, .table tr {
+    display: block;
   }
 
   .table thead tr {
@@ -144,19 +147,19 @@ hr {
 
   .table tr { border: 1px solid #ccc; }
 
-  .table td { 
+  .table td {
     border: none;
-    border-bottom: 1px solid #eee; 
+    border-bottom: 1px solid #eee;
     position: relative;
-    padding-left: 40%; 
+    padding-left: 40%;
   }
 
-  .table td:before { 
+  .table td:before {
     position: absolute;
     top: 6px;
     left: 6px;
-    width: 35%; 
-    padding-right: 10px; 
+    width: 35%;
+    padding-right: 10px;
     white-space: nowrap;
   }
 
