@@ -20,8 +20,5 @@ if [ "$do_backup" = "true" ]; then
   mkdir -p "$DEST_DIR"
   sqlite3 "$DB" ".backup $backup_file"
   touch "$last_backup_timestamp"
-  echo "backed up"
-else
-  echo "nothing to backup"
 fi
 
