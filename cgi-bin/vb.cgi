@@ -122,8 +122,9 @@ class VolleyDB:
             return None
 
         event = {'id': row[0],
-                 'location': row[1],
-                 'payment_link': row[2],
+                 'date': row[1],
+                 'location': row[2],
+                 'payment_link': row[3],
                  'guests': []}
 
         guests = []
