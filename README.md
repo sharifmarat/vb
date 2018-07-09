@@ -51,7 +51,7 @@ In short a reply to every request fits `{"message": XXX, "status":0}`.
 
 Run:
 ```
-(cd cgi-bin && ./test.sh)
+(cd cgi-bin && ./test.sh 2>/dev/null)
 ```
 
 ### Bootstrapping

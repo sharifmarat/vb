@@ -5,10 +5,20 @@ import sys
 import os
 import json
 import cgi
+import logging
+
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+logger = logging.getLogger('VB.CGI')
+
+def is_debug():
+    return os.getenv("VOLLEY_DEBUG") is not None
+
+def db_file():
+    return os.getenv('VOLLEY_DB', 'vb.sqlite')
 
 class VolleyDB:
-    def __init__(self, dbfile):
-        self.__connection = sqlite3.connect(dbfile)
+    def __init__(self):
+        self.__connection = sqlite3.connect(db_file())
         self.__connection.execute('PRAGMA foreign_keys = 1')
         self.__cursor = self.__connection.cursor()
 
@@ -135,103 +145,126 @@ class VolleyDB:
                                     'guest_paid':row[3]})
         return event
 
-def is_debug():
-    return os.getenv("VOLLEY_DEBUG") is not None
+class VolleyAPI:
+    def __init__(self):
+        self.__handlers = {
+            'add_event': self.add_event,
+            'events': self.events,
+            'update_event': self.update_event,
+            'set_primary_event': self.set_primary_event,
+            'update_guest': self.update_guest,
+            'add_guest': self.add_guest,
+            'remove_guest': self.remove_guest,
+            'event': self.event
+        }
+        if is_debug():
+            self.__handlers['init'] = self.init
 
-def return_error(msg):
-    return cgi.escape(json.dumps({'status': 1, 'message': msg}, sort_keys=True), False)
+    def dispatch(self, form):
+        try:
+            if 'action' not in form:
+                return self.__error('Configuration error, action is missing')
+            action = form.getfirst('action')
+            if action not in self.__handlers:
+                return self.__error('Configuration error, unknown action.')
 
-def return_success(msg):
-    return cgi.escape(json.dumps({'status': 0, 'message': msg}, sort_keys=True), False)
+            return self.__handlers[action](form)
 
-def action(form):
-    try:
-        if 'action' not in form:
-            return return_error('Configuration error, action is missing')
+        except sqlite3.IntegrityError as e:
+            logger.error(e, exc_info=True)
+            return self.__error('Integrity error')
+        except sqlite3.OperationalError as e:
+            logger.error(e, exc_info=True)
+            return self.__error('Operational error')
+        except Exception as e:
+            logger.error(e, exc_info=True)
+            return self.__error('Hmmm... unknown error')
 
-        action = form.getfirst('action')
-        db_name=os.getenv('VOLLEY_DB', 'vb.sqlite')
+    def init(self, form):
+        with VolleyDB() as db:
+            db.createTables()
+            return self.__success('Tables have been created')
 
-        if action == 'init' and is_debug():
-            with VolleyDB(db_name) as db:
-                db.createTables()
-                return return_success('Tables have been created')
-        elif action == 'add_event':
-            if 'date' not in form or 'location' not in form or 'payment_link' not in form:
-                return return_error('Could not add an event, fields are missing')
-            with VolleyDB(db_name) as db:
-                db.addEvent(form.getfirst('date'), form.getfirst('location'), form.getfirst('payment_link'))
-                return return_success('Event has been added')
-        elif action == 'events':
-            with VolleyDB(db_name) as db:
-                events = db.getEvents()
-                return return_success(events)
-        elif action == 'update_event':
-            if 'id' not in form or 'date' not in form or 'location' not in form or 'payment_link' not in form:
-                return return_error('Could not update an event, fields are missing')
-            with VolleyDB(db_name) as db:
-                if db.updateEvent(form.getfirst('id'), form.getfirst('date'), form.getfirst('location'), form.getfirst('payment_link')):
-                    return return_success('Event has been updated')
-                else:
-                    return return_error('Could not find an event to update')
-        elif action == 'set_primary_event':
-            if 'id' not in form:
-                return return_error('Could not update primary event, fields are missing.')
-            with VolleyDB(db_name) as db:
-                try:
-                    db.setPrimaryEvent(form.getfirst('id'))
-                    return return_success('Primary event has been updated.')
-                except sqlite3.IntegrityError as e:
-                    return return_error('Could set such an event as primary.')
-        elif action == 'update_guest':
-            if 'id' not in form or 'position' not in form or 'is_paid' not in form:
-                return return_error('Could not update a guest, fields are missing')
-            with VolleyDB(db_name) as db:
-                if db.updateGuest(form.getfirst('id'), form.getfirst('position'), form.getfirst('is_paid') == '1'):
-                    return return_success('Guest has been updated')
-                else:
-                    return return_error('Could not find a guest')
-        elif action == 'add_guest':
-            if 'name' not in form or 'position' not in form:
-                return return_error('Could not add a guest, fields are missing')
-            event_id = form.getfirst('event_id') if 'event_id' in form else None
-            with VolleyDB(db_name) as db:
-                try:
-                    db.addGuest(event_id, form.getfirst('name'), form.getfirst('position'))
-                    return return_success('Guest has been added')
-                except sqlite3.IntegrityError as e:
-                    return return_error('Could not add guest for such event')
-        elif action == 'remove_guest':
-            if 'id' not in form:
-                return return_error('Could not remove a guest, fields are missing')
-            with VolleyDB(db_name) as db:
-                try:
-                    db.removeGuest(form.getfirst('id'))
-                    return return_success('Guest has been removed')
-                except sqlite3.IntegrityError as e:
-                    return return_error('Could not remove guest')
-        elif action == 'event':
-            event_id = form.getfirst('id') if 'id' in form else None
-            with VolleyDB(db_name) as db:
-                event = db.getEvent(event_id)
-                if not event:
-                    return return_error('Event not found')
-                else:
-                    return return_success(event)
-        else:
-            return return_error('Configuration error, unknown action.')
-    except sqlite3.IntegrityError as e:
-        print(str(e), file=sys.stderr)
-        return return_error('Integrity error')
-    except sqlite3.OperationalError as e:
-        print(str(e), file=sys.stderr)
-        return return_error('Operational error')
-    except:
-        print('Unknown error', file=sys.stderr)
-        return return_error('Hmmm... unknown error')
+    def add_event(self, form):
+       if 'date' not in form or 'location' not in form or 'payment_link' not in form:
+           return self.__error('Could not add an event, fields are missing')
+       with VolleyDB() as db:
+           db.addEvent(form.getfirst('date'), form.getfirst('location'), form.getfirst('payment_link'))
+           return self.__success('Event has been added')
 
+    def events(self, form):
+       with VolleyDB() as db:
+           events = db.getEvents()
+           return self.__success(events)
+
+    def update_event(self, form):
+       if 'id' not in form or 'date' not in form or 'location' not in form or 'payment_link' not in form:
+           return self.__error('Could not update an event, fields are missing')
+       with VolleyDB() as db:
+           if db.updateEvent(form.getfirst('id'), form.getfirst('date'), form.getfirst('location'), form.getfirst('payment_link')):
+               return self.__success('Event has been updated')
+           else:
+               return self.__error('Could not find an event to update')
+
+    def set_primary_event(self, form):
+       if 'id' not in form:
+           return self.__error('Could not update primary event, fields are missing.')
+       with VolleyDB() as db:
+           try:
+               db.setPrimaryEvent(form.getfirst('id'))
+               return self.__success('Primary event has been updated.')
+           except sqlite3.IntegrityError as e:
+               return self.__error('Could not set such an event as primary.')
+
+    def update_guest(self, form):
+       if 'id' not in form or 'position' not in form or 'is_paid' not in form:
+           return self.__error('Could not update a guest, fields are missing')
+       with VolleyDB() as db:
+           if db.updateGuest(form.getfirst('id'), form.getfirst('position'), form.getfirst('is_paid') == '1'):
+               return self.__success('Guest has been updated')
+           else:
+               return self.__error('Could not find a guest')
+
+    def add_guest(self, form):
+       if 'name' not in form or 'position' not in form:
+           return self.__error('Could not add a guest, fields are missing')
+       event_id = form.getfirst('event_id') if 'event_id' in form else None
+       with VolleyDB() as db:
+           try:
+               db.addGuest(event_id, form.getfirst('name'), form.getfirst('position'))
+               return self.__success('Guest has been added')
+           except sqlite3.IntegrityError as e:
+               return self.__error('Could not add guest for such event')
+
+    def remove_guest(self, form):
+        if 'id' not in form:
+            return self.__error('Could not remove a guest, fields are missing')
+        with VolleyDB() as db:
+            try:
+                db.removeGuest(form.getfirst('id'))
+                return self.__success('Guest has been removed')
+            except sqlite3.IntegrityError as e:
+                return self.__error('Could not remove guest')
+
+    def event(self, form):
+       event_id = form.getfirst('id') if 'id' in form else None
+       with VolleyDB() as db:
+           event = db.getEvent(event_id)
+           if not event:
+               return self.__error('Event not found')
+           else:
+               return self.__success(event)
+
+    def __error(self, msg):
+        logger.error('Error reply: {}'.format(msg))
+        return cgi.escape(json.dumps({'status': 1, 'message': msg}, sort_keys=True), False)
+
+    def __success(self, msg):
+        return cgi.escape(json.dumps({'status': 0, 'message': msg}, sort_keys=True), False)
+
+api = VolleyAPI()
 form = cgi.FieldStorage()
-result = action(form)
+result = api.dispatch(form)
 
 if not is_debug():
     print('Content-Type: text/plain\n')

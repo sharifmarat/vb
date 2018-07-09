@@ -23,6 +23,7 @@ assert "`QUERY_STRING=action=init ./vb.cgi`" '{"message": "Tables have been crea
 
 echo "Testing unknown action..."
 assert "`QUERY_STRING=action=unknown ./vb.cgi`" '{"message": "Configuration error, unknown action.", "status": 1}'
+assert "`QUERY_STRING= ./vb.cgi`" '{"message": "Configuration error, action is missing", "status": 1}'
 
 echo "Testing events and add_event..."
 assert "`QUERY_STRING=action=events ./vb.cgi`" '{"message": [], "status": 0}'
@@ -84,8 +85,8 @@ echo "Primary event....."
 assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": "Event not found", "status": 1}'
 assert "`QUERY_STRING=action=add_guest\&name=pr_name\&position=pr_pos ./vb.cgi`" '{"message": "Could not add guest for such event", "status": 1}'
 assert "`QUERY_STRING=action=set_primary_event ./vb.cgi`" '{"message": "Could not update primary event, fields are missing.", "status": 1}'
-assert "`QUERY_STRING=action=set_primary_event\&id=xxx ./vb.cgi`" '{"message": "Could set such an event as primary.", "status": 1}'
-assert "`QUERY_STRING=action=set_primary_event\&id=4 ./vb.cgi`" '{"message": "Could set such an event as primary.", "status": 1}'
+assert "`QUERY_STRING=action=set_primary_event\&id=xxx ./vb.cgi`" '{"message": "Could not set such an event as primary.", "status": 1}'
+assert "`QUERY_STRING=action=set_primary_event\&id=4 ./vb.cgi`" '{"message": "Could not set such an event as primary.", "status": 1}'
 assert "`QUERY_STRING=action=set_primary_event\&id=3 ./vb.cgi`" '{"message": "Primary event has been updated.", "status": 0}'
 assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": {"date": "event33", "guests": [{"guest_id": 4, "guest_name": "g1_3", "guest_paid": 0, "guest_position": "pos3_3"}], "id": 3, "location": "loc33", "payment_link": "pay33"}, "status": 0}'
 assert "`QUERY_STRING=action=event\&id= ./vb.cgi`" '{"message": {"date": "event33", "guests": [{"guest_id": 4, "guest_name": "g1_3", "guest_paid": 0, "guest_position": "pos3_3"}], "id": 3, "location": "loc33", "payment_link": "pay33"}, "status": 0}'
