@@ -69,3 +69,5 @@ And now open `localhost:8000` in browser.
 ### TODO
 
 - Make an event clickable on `/events.html`.
+- Don't actually remove players, but mark them as removed and show in a shame list.
+
