@@ -60,28 +60,26 @@
         success: function(response){
           var result = JSON.parse(response);
           if (result.status != 0) {
-            alert('error');
+            alert(result.message);
           } else {
-            if (result.message[0] != undefined) {
-              const parse_format = 'DD.MM.YYYY HH:mm';
-              const display_format = 'dddd, MMM Do YYYY [at] HH:mm';
-              const m_date = moment(result.message[0].date, parse_format);
-              $('#event_date').text(m_date.format(display_format));
-              $('#event_location').text(result.message[0].location);
-              // update both text and href attribute
-              $('#payment_link').text(result.message[0].payment_link);
-              $('#payment_link').attr('href', result.message[0].payment_link);
+            const parse_format = 'DD.MM.YYYY HH:mm';
+            const display_format = 'dddd, MMM Do YYYY [at] HH:mm';
+            const m_date = moment(result.message.date, parse_format);
+            $('#event_date').text(m_date.format(display_format));
+            $('#event_location').text(result.message.location);
+            // update both text and href attribute
+            $('#payment_link').text(result.message.payment_link);
+            $('#payment_link').attr('href', result.message.payment_link);
 
-              $('.addeventatc .timezone').text('Europe/Amsterdam');
-              $('.addeventatc .title').text('Let\'s volleyball @' + result.message[0].location + ' on ' + m_date.format(display_format));
-              $('.addeventatc .description').text(result.message[0].date + ' ' + result.message[0].location);
-              $('.addeventatc .location').text(result.message[0].location);
+            $('.addeventatc .timezone').text('Europe/Amsterdam');
+            $('.addeventatc .title').text('Let\'s volleyball @' + result.message.location + ' on ' + m_date.format(display_format));
+            $('.addeventatc .description').text(result.message.date + ' ' + result.message.location);
+            $('.addeventatc .location').text(result.message.location);
 
-              $('.addeventatc .start').text(m_date.format(parse_format));
-              $('.addeventatc .end').text(m_date.add(3, 'hours').format(parse_format));
-            }
+            $('.addeventatc .start').text(m_date.format(parse_format));
+            $('.addeventatc .end').text(m_date.add(3, 'hours').format(parse_format));
 
-            $( "#players" ).html(template( {players: result.message} ));
+            $( "#players" ).html(template( {players: result.message.guests} ));
           }
         },
         error: function(response){

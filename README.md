@@ -68,6 +68,4 @@ And now open `localhost:8000` in browser.
 
 ### TODO
 
-- `/?event_id=1` or `/index.html` does not display any event data if no guests are assigned.
-At least one guest should be assigned before it's properly displayed.
 - Make an event clickable on `/events.html`.

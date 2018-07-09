@@ -103,24 +103,36 @@ class VolleyDB:
             return self.__cursor.rowcount == 1
 
     def getEvent(self, event_id):
-        guests = []
-        query = 'select events.date, events.location, events.payment_link, guests.id, guests.name, guests.position, guests.is_paid from guests inner join events on events.id = guests.event_id'
+        query_guests = 'select guests.id, guests.name, guests.position, guests.is_paid from guests inner join events on events.id = guests.event_id'
+        query_event = 'select events.id, date, location, payment_link from events';
+
         params = ()
         if event_id is None:
-          query += '  inner join primary_event on primary_event.event_id = events.id';
+            query_guests += '  inner join primary_event on primary_event.event_id = events.id';
+            query_event += ' inner join primary_event on primary_event.event_id = events.id';
         else:
-          query += ' where events.id=?'
-          params = (event_id,)
-        query += ' order by guests.id limit 100' # TODO, customize the limit
-        for row in self.__cursor.execute(query, params):
-            guests.append({'date':row[0],
-                           'location':row[1],
-                           'payment_link': row[2],
-                           'guest_id':row[3],
-                           'guest_name':row[4],
-                           'guest_position':row[5],
-                           'guest_paid':row[6]})
-        return guests
+            query_guests += ' where events.id=?'
+            query_event += ' where events.id=?'
+            params = (event_id,)
+
+        self.__cursor.execute(query_event, params)
+        row = self.__cursor.fetchone()
+
+        if not row:
+            return None
+
+        event = {'id': row[0],
+                 'location': row[1],
+                 'payment_link': row[2],
+                 'guests': []}
+
+        guests = []
+        for row in self.__cursor.execute(query_guests + ' order by guests.id limit 100', params):
+            event['guests'].append({'guest_id':row[0],
+                                    'guest_name':row[1],
+                                    'guest_position':row[2],
+                                    'guest_paid':row[3]})
+        return event
 
 def is_debug():
     return os.getenv("VOLLEY_DEBUG") is not None
@@ -201,7 +213,10 @@ def action(form):
             event_id = form.getfirst('id') if 'id' in form else None
             with VolleyDB(db_name) as db:
                 event = db.getEvent(event_id)
-                return return_success(event)
+                if not event:
+                    return return_error('Event not found')
+                else:
+                    return return_success(event)
         else:
             return return_error('Configuration error, unknown action.')
     except sqlite3.IntegrityError as e:

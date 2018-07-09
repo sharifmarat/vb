@@ -66,105 +66,35 @@ assert "`QUERY_STRING=action=add_guest\&event_id=3\&name=g1_3\&position=pos3_3 .
 
 
 echo "Testing event....."
-assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": [], "status": 0}'
-assert "`QUERY_STRING=action=event\&id=xxxx ./vb.cgi`" '{"message": [], "status": 0}'
-assert "`QUERY_STRING=action=event\&id=9999 ./vb.cgi`" '{"message": [], "status": 0}'
-assert "`QUERY_STRING=action=event\&id=1 ./vb.cgi`" '{"message": [], "status": 0}'
-assert "`QUERY_STRING=action=event\&id=3 ./vb.cgi`" '{"message": [{"date": "event33", "guest_id": 4, '`
-                                                    `'"guest_name": "g1_3", "guest_paid": 0, '`
-                                                    `'"guest_position": "pos3_3", "location": "loc33", "payment_link": "pay33"}], "status": 0}'
-assert "`QUERY_STRING=action=event\&id=2 ./vb.cgi`" '{"message": [{"date": "event2", '`
-                                                                 `'"guest_id": 1, '`
-                                                                 `'"guest_name": "g1", '`
-                                                                 `'"guest_paid": 0, '`
-                                                                 `'"guest_position": "pos1", '`
-                                                                 `'"location": "loc2", '`
-                                                                 `'"payment_link": "tbd"}, '`
-                                                                 `'{"date": "event2", '`
-                                                                 `'"guest_id": 2, '`
-                                                                 `'"guest_name": "g2", '`
-                                                                 `'"guest_paid": 0, '`
-                                                                 `'"guest_position": "pos2", '`
-                                                                 `'"location": "loc2", '`
-                                                                 `'"payment_link": "tbd"}, '`
-                                                                 `'{"date": "event2", '`
-                                                                 `'"guest_id": 3, '`
-                                                                 `'"guest_name": "g3", '`
-                                                                 `'"guest_paid": 0, '`
-                                                                 `'"guest_position": "pos3", '`
-                                                                 `'"location": "loc2", '`
-                                                                 `'"payment_link": "tbd"}], "status": 0}'
+assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": "Event not found", "status": 1}'
+assert "`QUERY_STRING=action=event\&id=xxxx ./vb.cgi`" '{"message": "Event not found", "status": 1}'
+assert "`QUERY_STRING=action=event\&id=9999 ./vb.cgi`" '{"message": "Event not found", "status": 1}'
+assert "`QUERY_STRING=action=event\&id=1 ./vb.cgi`" '{"message": {"guests": [], "id": 1, "location": "event1", "payment_link": "loc1"}, "status": 0}'
+assert "`QUERY_STRING=action=event\&id=3 ./vb.cgi`" '{"message": {"guests": [{"guest_id": 4, "guest_name": "g1_3", "guest_paid": 0, "guest_position": "pos3_3"}], "id": 3, "location": "event33", "payment_link": "loc33"}, "status": 0}'
+assert "`QUERY_STRING=action=event\&id=2 ./vb.cgi`" '{"message": {"guests": [{"guest_id": 1, "guest_name": "g1", "guest_paid": 0, "guest_position": "pos1"}, {"guest_id": 2, "guest_name": "g2", "guest_paid": 0, "guest_position": "pos2"}, {"guest_id": 3, "guest_name": "g3", "guest_paid": 0, "guest_position": "pos3"}], "id": 2, "location": "event2", "payment_link": "loc2"}, "status": 0}'
 
 echo "Testing removing guest...."
 assert "`QUERY_STRING=action=remove_guest ./vb.cgi`" '{"message": "Could not remove a guest, fields are missing", "status": 1}'
 assert "`QUERY_STRING=action=remove_guest\&id=xxxx ./vb.cgi`" '{"message": "Guest has been removed", "status": 0}'
 assert "`QUERY_STRING=action=remove_guest\&id=9999 ./vb.cgi`" '{"message": "Guest has been removed", "status": 0}'
 assert "`QUERY_STRING=action=remove_guest\&id=2 ./vb.cgi`" '{"message": "Guest has been removed", "status": 0}'
-assert "`QUERY_STRING=action=event\&id=2 ./vb.cgi`" '{"message": [{"date": "event2", '`
-                                                                 `'"guest_id": 1, '`
-                                                                 `'"guest_name": "g1", '`
-                                                                 `'"guest_paid": 0, '`
-                                                                 `'"guest_position": "pos1", '`
-                                                                 `'"location": "loc2", '`
-                                                                 `'"payment_link": "tbd"}, '`
-                                                                 `'{"date": "event2", '`
-                                                                 `'"guest_id": 3, '`
-                                                                 `'"guest_name": "g3", '`
-                                                                 `'"guest_paid": 0, '`
-                                                                 `'"guest_position": "pos3", '`
-                                                                 `'"location": "loc2", '`
-                                                                 `'"payment_link": "tbd"}], "status": 0}'
+assert "`QUERY_STRING=action=event\&id=2 ./vb.cgi`" '{"message": {"guests": [{"guest_id": 1, "guest_name": "g1", "guest_paid": 0, "guest_position": "pos1"}, {"guest_id": 3, "guest_name": "g3", "guest_paid": 0, "guest_position": "pos3"}], "id": 2, "location": "event2", "payment_link": "loc2"}, "status": 0}'
 
 echo "Primary event....."
-assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": [], "status": 0}'
+assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": "Event not found", "status": 1}'
 assert "`QUERY_STRING=action=add_guest\&name=pr_name\&position=pr_pos ./vb.cgi`" '{"message": "Could not add guest for such event", "status": 1}'
 assert "`QUERY_STRING=action=set_primary_event ./vb.cgi`" '{"message": "Could not update primary event, fields are missing.", "status": 1}'
 assert "`QUERY_STRING=action=set_primary_event\&id=xxx ./vb.cgi`" '{"message": "Could set such an event as primary.", "status": 1}'
 assert "`QUERY_STRING=action=set_primary_event\&id=4 ./vb.cgi`" '{"message": "Could set such an event as primary.", "status": 1}'
 assert "`QUERY_STRING=action=set_primary_event\&id=3 ./vb.cgi`" '{"message": "Primary event has been updated.", "status": 0}'
-assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": [{"date": "event33", "guest_id": 4, '`
-                                                           `'"guest_name": "g1_3", "guest_paid": 0, '`
-                                                           `'"guest_position": "pos3_3", "location": "loc33", "payment_link": "pay33"}], "status": 0}'
-assert "`QUERY_STRING=action=event\&id= ./vb.cgi`" '{"message": [{"date": "event33", "guest_id": 4, '`
-                                                                `'"guest_name": "g1_3", "guest_paid": 0, '`
-                                                                `'"guest_position": "pos3_3", "location": "loc33", "payment_link": "pay33"}], "status": 0}'
-assert "`QUERY_STRING=action=event\&id=\"\" ./vb.cgi`" '{"message": [{"date": "event33", "guest_id": 4, '`
-                                                                `'"guest_name": "g1_3", "guest_paid": 0, '`
-                                                                `'"guest_position": "pos3_3", "location": "loc33", "payment_link": "pay33"}], "status": 0}'
+assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": {"guests": [{"guest_id": 4, "guest_name": "g1_3", "guest_paid": 0, "guest_position": "pos3_3"}], "id": 3, "location": "event33", "payment_link": "loc33"}, "status": 0}'
+assert "`QUERY_STRING=action=event\&id= ./vb.cgi`" '{"message": {"guests": [{"guest_id": 4, "guest_name": "g1_3", "guest_paid": 0, "guest_position": "pos3_3"}], "id": 3, "location": "event33", "payment_link": "loc33"}, "status": 0}'
+assert "`QUERY_STRING=action=event\&id=\"\" ./vb.cgi`" '{"message": {"guests": [{"guest_id": 4, "guest_name": "g1_3", "guest_paid": 0, "guest_position": "pos3_3"}], "id": 3, "location": "event33", "payment_link": "loc33"}, "status": 0}'
 assert "`QUERY_STRING=action=add_guest\&name=pr_name\&position=pr_pos ./vb.cgi`" '{"message": "Guest has been added", "status": 0}'
-assert "`QUERY_STRING=action=event ./vb.cgi`" \
-    '{"message": [{"date": "event33", '`
-                 `'"guest_id": 4, '`
-                 `'"guest_name": "g1_3", '`
-                 `'"guest_paid": 0, '`
-                 `'"guest_position": '`
-                 `'"pos3_3", '`
-                 `'"location": "loc33", '`
-                 `'"payment_link": "pay33"}, '`
-                 `'{"date": "event33", '`
-                 `'"guest_id": 5, '`
-                 `'"guest_name": "pr_name", '`
-                 `'"guest_paid": 0, '`
-                 `'"guest_position": "pr_pos", '`
-                 `'"location": "loc33", '`
-                 `'"payment_link": "pay33"}], '`
-  `'"status": 0}'
+assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": {"guests": [{"guest_id": 4, "guest_name": "g1_3", "guest_paid": 0, "guest_position": "pos3_3"}, {"guest_id": 5, "guest_name": "pr_name", "guest_paid": 0, "guest_position": "pr_pos"}], "id": 3, "location": "event33", "payment_link": "loc33"}, "status": 0}'
 
 assert "`QUERY_STRING=action=set_primary_event\&id=2 ./vb.cgi`" '{"message": "Primary event has been updated.", "status": 0}'
-assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": [{"date": "event2", '`
-                                                           `'"guest_id": 1, '`
-                                                           `'"guest_name": "g1", '`
-                                                           `'"guest_paid": 0, '`
-                                                           `'"guest_position": "pos1", '`
-                                                           `'"location": "loc2", '`
-                                                           `'"payment_link": "tbd"}, '`
-                                                           `'{"date": "event2", '`
-                                                           `'"guest_id": 3, '`
-                                                           `'"guest_name": "g3", '`
-                                                           `'"guest_paid": 0, '`
-                                                           `'"guest_position": "pos3", '`
-                                                           `'"location": "loc2", '`
-                                                           `'"payment_link": "tbd"}], "status": 0}'
+assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": {"guests": [{"guest_id": 1, "guest_name": "g1", "guest_paid": 0, "guest_position": "pos1"}, {"guest_id": 3, "guest_name": "g3", "guest_paid": 0, "guest_position": "pos3"}], "id": 2, "location": "event2", "payment_link": "loc2"}, "status": 0}'
 
 echo "TODO: Testing update_guest....."
 
