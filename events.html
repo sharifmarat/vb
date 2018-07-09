@@ -1,56 +1,58 @@
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Let's volleyball</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/main.css?v=1.0.2">
-    <script src="js/jquery-2.2.3.min.js"></script>
-    <script src="js/underscore-min.js"></script>
-    <script src="js/vb.js"></script>
-  </head>
-  <script type="text/template" id="events-template">
-    <div class="row font-weight-bold">
-      <div class="col-4 col-lg-2">Date</div>
-      <div class="col-4 col-lg-3">Location</div>
-      <div class="col-4 col-lg-3">Payment</div>
-      <div class="col-12 col-lg-4 d-none d-lg-block"></div>
-    </div>
-    <% _.each( events, function( event, index ) { %>
-      <hr />
-      <div class="row form-inline">
-        <div class="col-4 col-lg-2"><label id="event_date_<%= event.id %>"><%= event.date %></label></div>
-        <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_location_<%= event.id %>" value="<%= event.location %>" /></div>
-        <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_payment_<%= event.id %>" value="<%= event.payment_link %>" /></div>
-        <div class="col-12 col-lg-4 text-right text-lg-left">
-          <div class="mt-3 d-block d-lg-none"></div>
-          <input type="button" class="btn btn-success" value="Update" onclick="update_event(<%= event.id %>)"/>
-          <% if (event.primary == true) { %>
-            <input type="button" class="btn" value="Primary" disabled/>
-          <% } else { %>
-            <input type="button" class="btn btn-primary" value="Set as primary" onclick="set_primary_event(<%= event.id %>)"/>
-          <% } %>
-        </div>
-      </div>
-    <% }); %>
-    <hr class="bold" />
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Let's volleyball</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/main.css?v=1.0.2">
+  <link rel="stylesheet" href="css/jquery.datetimepicker.min.css">
+  <script src="js/jquery-2.2.3.min.js"></script>
+  <script src="js/jquery.datetimepicker.full.min.js"></script>
+  <script src="js/underscore-min.js"></script>
+  <script src="js/vb.js"></script>
+</head>
+<script type="text/template" id="events-template">
+  <div class="row font-weight-bold">
+    <div class="col-4 col-lg-2">Date</div>
+    <div class="col-4 col-lg-3">Location</div>
+    <div class="col-4 col-lg-3">Payment</div>
+    <div class="col-12 col-lg-4 d-none d-lg-block"></div>
+  </div>
+  <% _.each( events, function( event, index ) { %>
+    <hr />
     <div class="row form-inline">
-      <div class="col-4 col-lg-2"><input type="text" class="form-control" id="event_date_new" value="" placeholder="Date" /></div>
-      <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_location_new" value="" placeholder="Location" /></div>
-      <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_payment_new" value="" placeholder="Payment URL" /></div>
+      <div class="col-4 col-lg-2"><label id="event_date_<%= event.id %>"><%= event.date %></label></div>
+      <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_location_<%= event.id %>" value="<%= event.location %>" /></div>
+      <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_payment_<%= event.id %>" value="<%= event.payment_link %>" /></div>
       <div class="col-12 col-lg-4 text-right text-lg-left">
         <div class="mt-3 d-block d-lg-none"></div>
-        <input type="button" class="btn btn-success" value="Add event" onclick="add_event()"/>
-      </div>
-    </div>
-  </script>
-  <script>
-    var template = _.template($( "#events-template" ).html());
-    $( "#events-template" ).remove();
+        <input type="button" class="btn btn-success" value="Update" onclick="update_event(<%= event.id %>)"/>
+        <% if (event.primary == true) { %>
+          <input type="button" class="btn" value="Primary" disabled/>
+          <% } else { %>
+            <input type="button" class="btn btn-primary" value="Set as primary" onclick="set_primary_event(<%= event.id %>)"/>
+            <% } %>
+          </div>
+        </div>
+        <% }); %>
+        <hr class="bold" />
+        <div class="row form-inline">
+          <div class="col-4 col-lg-2"><input type="text" class="form-control" id="event_date_new" value="" placeholder="Date" /></div>
+          <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_location_new" value="" placeholder="Location" /></div>
+          <div class="col-4 col-lg-3"><input type="text" class="form-control" id="event_payment_new" value="" placeholder="Payment URL" /></div>
+          <div class="col-12 col-lg-4 text-right text-lg-left">
+            <div class="mt-3 d-block d-lg-none"></div>
+            <input type="button" class="btn btn-success" value="Add event" onclick="add_event()"/>
+          </div>
+        </div>
+      </script>
+      <script>
+      var template = _.template($( "#events-template" ).html());
+      $( "#events-template" ).remove();
 
-    $(document).ready(function() {
-      $.ajax({type: "POST",
+      $(document).ready(function() {
+        $.ajax({type: "POST",
         url: apiLink,
         data: {
           action: 'events'
@@ -61,6 +63,13 @@
             alert('error: ' + result.message);
           } else {
             $( "#events" ).html(template( {events: result.message} ));
+            $( '#event_date_new' ).datetimepicker({
+              format:'d/m/Y H:i',
+              step: 30,
+              minTime: '18:00',
+              defaultTime: '19:30',
+              maxTime: '21:00',
+            });
           }
         },
         error: function(response){
@@ -68,12 +77,12 @@
         }
       });
     });
-  </script>
-  <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-10 offset-md-1 col-sm-12">
-          <div class="row">
+    </script>
+    <body>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-10 offset-md-1 col-sm-12">
+            <div class="row">
               <nav class="navbar col bg-light">
                 <span class="navbar-brand">Let's volleyball</span>
                 <ul class="navbar-nav mr-auto">
@@ -82,21 +91,21 @@
                   </li>
                 </ul>
               </nav>
-          </div>
-          <div class="row">
-            <div class="col">
-              <p>
-                List of most recent events. Events are clickable. A primary event is displayed on the <a href="index.html">main page</a>.<br>
-              </p>
             </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <div id="events"></div>
+            <div class="row">
+              <div class="col">
+                <p>
+                  List of most recent events. Events are clickable. A primary event is displayed on the <a href="index.html">main page</a>.<br>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div id="events"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </body>
-</html>
+    </body>
+    </html>

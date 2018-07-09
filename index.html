@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="css/main.css?v=1.0.2">
     <script src="js/jquery-2.2.3.min.js"></script>
     <script src="js/underscore-min.js"></script>
+    <script src="js/moment.min.js"></script>
     <script src="js/vb.js"></script>
+    <script type="text/javascript" src="https://addevent.com/libs/atc/1.6.1/atc.min.js" async defer></script>
   </head>
   <script type="text/template" id="players-template">
     <div class="row text-left font-weight-bold">
@@ -61,11 +63,22 @@
             alert('error');
           } else {
             if (result.message[0] != undefined) {
-              $('#event_date').text(result.message[0].date);
+              const parse_format = 'DD.MM.YYYY HH:mm';
+              const display_format = 'dddd, MMM Do YYYY [at] HH:mm';
+              const m_date = moment(result.message[0].date, parse_format);
+              $('#event_date').text(m_date.format(display_format));
               $('#event_location').text(result.message[0].location);
               // update both text and href attribute
               $('#payment_link').text(result.message[0].payment_link);
               $('#payment_link').attr('href', result.message[0].payment_link);
+
+              $('.addeventatc .timezone').text('Europe/Amsterdam');
+              $('.addeventatc .title').text('Let\'s volleyball @' + result.message[0].location + ' on ' + m_date.format(display_format));
+              $('.addeventatc .description').text(result.message[0].date + ' ' + result.message[0].location);
+              $('.addeventatc .location').text(result.message[0].location);
+
+              $('.addeventatc .start').text(m_date.format(parse_format));
+              $('.addeventatc .end').text(m_date.add(3, 'hours').format(parse_format));
             }
 
             $( "#players" ).html(template( {players: result.message} ));
@@ -95,12 +108,22 @@
             <div class="col">
               <p>
                 Most recent event:
-                  <strong>
-                    <label id='event_date'>Loading...</label>
-                    <label id='event_location'></label>
-                  </strong>
-                  <br />
-                  Pay here: <a href="#" id='payment_link' target="_blank">Loading...</a>
+                <strong>
+                  <label id='event_date'>Loading...</label>
+                  <label id='event_location'></label>
+                </strong>
+                &nbsp;
+                <span title="Add to Calendar" class="addeventatc">
+                    Add to Calendar
+                    <span class="start"></span>
+                    <span class="end"></span>
+                    <span class="timezone"></span>
+                    <span class="title"></span>
+                    <span class="description"></span>
+                    <span class="location"></span>
+                </span>
+                <br />
+                Pay here: <a href="#" id='payment_link' target="_blank">Loading...</a>
               </p>
             </div>
           </div>
