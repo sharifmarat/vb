@@ -65,8 +65,10 @@ class VolleyDB:
                         check(
                             typeof("position") = "text" 
                             AND length("position") <= 64),
-                    is_paid boolean not null 
+                    is_paid boolean default 0 
                         check (is_paid in (0, 1)),
+                    is_removed boolean default 0
+                        check (is_removed in (0, 1)),
                     foreign key(event_id) references events(id));""")
 
     def getEvents(self):
@@ -102,9 +104,15 @@ class VolleyDB:
 
     def removeGuest(self, guest_id):
         with self.__connection:
-            self.__cursor.execute('delete from guests where id=?', (guest_id,))
+            self.__cursor.execute('update guests set is_removed=1 where id=?', (guest_id,))
             self.__connection.commit()
             return self.__cursor.rowcount == 1
+
+    def lastRemovedGuests(self, count):
+        removed = []
+        for row in self.__cursor.execute('select name from guests where is_removed=1 order by id desc limit ?', (count,)):
+            removed.append({'name': row[0]})
+        return removed
 
     def updateGuest(self, id, position, is_paid):
         with self.__connection:
@@ -118,10 +126,10 @@ class VolleyDB:
 
         params = ()
         if event_id is None:
-            query_guests += '  inner join primary_event on primary_event.event_id = events.id';
+            query_guests += '  inner join primary_event on primary_event.event_id = events.id where guests.is_removed=0';
             query_event += ' inner join primary_event on primary_event.event_id = events.id';
         else:
-            query_guests += ' where events.id=?'
+            query_guests += ' where events.id=? and guests.is_removed=0 '
             query_event += ' where events.id=?'
             params = (event_id,)
 
@@ -155,7 +163,8 @@ class VolleyAPI:
             'update_guest': self.update_guest,
             'add_guest': self.add_guest,
             'remove_guest': self.remove_guest,
-            'event': self.event
+            'event': self.event,
+            'shame': self.shame
         }
         if is_debug():
             self.__handlers['init'] = self.init
@@ -254,6 +263,11 @@ class VolleyAPI:
                return self.__error('Event not found')
            else:
                return self.__success(event)
+
+    def shame(self, form):
+       with VolleyDB() as db:
+           removed = db.lastRemovedGuests(40)
+           return self.__success(removed)
 
     def __error(self, msg):
         logger.error('Error reply: {}'.format(msg))

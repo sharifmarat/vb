@@ -1,0 +1,84 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Let's volleyball</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/main.css?v=1.0.2">
+  <script src="js/jquery-2.2.3.min.js"></script>
+  <script src="js/underscore-min.js"></script>
+  <script src="js/vb.js"></script>
+</head>
+<script type="text/template" id="shame-template">
+  <div class="row font-weight-bold">
+    <div class="col-4 col-lg-3">Name</div>
+  </div>
+  <% _.each( events, function( player, index ) { %>
+    <hr />
+    <div class="row form-inline">
+      <div class="col-4 col-lg-3"><label><%= player.name %></label></div>
+    </div>
+  <% }); %>
+</script>
+<script>
+      var template = _.template($( "#shame-template" ).html());
+      $( "#shame-template" ).remove();
+
+      $(document).ready(function() {
+        $.ajax({type: "POST",
+        url: apiLink,
+        data: {
+          action: 'shame'
+        },
+        success: function(response){
+          var result = JSON.parse(response);
+          if (result.status != 0) {
+            alert('error: ' + result.message);
+          } else {
+            $( "#shame" ).html(template( {events: result.message} ));
+          }
+        },
+        error: function(response){
+          alert('server error');
+        }
+      });
+    });
+</script>
+    <body>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-10 offset-md-1 col-sm-12">
+            <div class="row">
+              <nav class="navbar navbar-expand-lg col bg-light">
+                <span class="navbar-brand">Let's volleyball</span>
+                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                    <a class="nav-link" href="index.html">Primary event</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="events.html">All events</a>
+                  </li>
+                  <li class="nav-item active">
+                    <a class="nav-link" href="#">Shame</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="row">
+              <div class="col">
+                <p>
+                  Hall of shame
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div id="shame"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>

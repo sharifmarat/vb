@@ -42,6 +42,8 @@ Env var `VOLLEY_DEBUG` enables debugging.
 
 `action=set_primary_event&id=2` - Set a primary event. A primary event is the one which is displayed at `index.html`.
 
+`action=shame` - Returns list of last N cancellations.
+
 In short a reply to every request fits `{"message": XXX, "status":0}`.  
 `status=0` is on success and `message` contains corresponding data.  
 `status=1` is on failure and `message` contains an error message.
@@ -69,5 +71,4 @@ And now open `localhost:8000` in browser.
 ### TODO
 
 - Make an event clickable on `/events.html`.
-- Don't actually remove players, but mark them as removed and show in a shame list.
 

@@ -97,6 +97,9 @@ assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": {"date": "event33", "
 assert "`QUERY_STRING=action=set_primary_event\&id=2 ./vb.cgi`" '{"message": "Primary event has been updated.", "status": 0}'
 assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": {"date": "event2", "guests": [{"guest_id": 1, "guest_name": "g1", "guest_paid": 0, "guest_position": "pos1"}, {"guest_id": 3, "guest_name": "g3", "guest_paid": 0, "guest_position": "pos3"}], "id": 2, "location": "loc2", "payment_link": "tbd"}, "status": 0}'
 
+echo "Testing shame....."
+assert "`QUERY_STRING=action=shame ./vb.cgi`" '{"message": [{"name": "g2"}], "status": 0}'
+
 echo "TODO: Testing update_guest....."
 
 echo "SUCCESS"
