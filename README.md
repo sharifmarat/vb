@@ -63,7 +63,7 @@ To run it locally from the repo root:
 # initialize the database
 (cd cgi-bin && ./init.sh)
 # start the cgi web server
-VOLLEY_DB=cgi-bin/vb.sqlite python3 -m http.server --bind localhost --cgi 8000
+VOLLEY_DB=cgi-bin/vb.sqlite python3 -m http.server --bind 0.0.0.0 --cgi 8000
 ```
 
 And now open `localhost:8000` in browser.
