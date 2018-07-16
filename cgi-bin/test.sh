@@ -98,7 +98,11 @@ assert "`QUERY_STRING=action=set_primary_event\&id=2 ./vb.cgi`" '{"message": "Pr
 assert "`QUERY_STRING=action=event ./vb.cgi`" '{"message": {"date": "event2", "guests": [{"guest_id": 1, "guest_name": "g1", "guest_paid": 0, "guest_position": "pos1"}, {"guest_id": 3, "guest_name": "g3", "guest_paid": 0, "guest_position": "pos3"}], "id": 2, "location": "loc2", "payment_link": "tbd"}, "status": 0}'
 
 echo "Testing shame....."
-assert "`QUERY_STRING=action=shame ./vb.cgi`" '{"message": [{"name": "g2"}], "status": 0}'
+assert "`QUERY_STRING=action=add_guest\&event_id=2\&name=event2_guest3\&position=pos ./vb.cgi`" '{"message": "Guest has been added", "status": 0}'
+assert "`QUERY_STRING=action=add_guest\&event_id=2\&name=event2_guest4\&position=pos ./vb.cgi`" '{"message": "Guest has been added", "status": 0}'
+assert "`QUERY_STRING=action=remove_guest\&id=7 ./vb.cgi`" '{"message": "Guest has been removed", "status": 0}'
+assert "`QUERY_STRING=action=remove_guest\&id=6 ./vb.cgi`" '{"message": "Guest has been removed", "status": 0}'
+assert "`QUERY_STRING=action=shame ./vb.cgi`" '{"message": [{"name": "event2_guest3"}, {"name": "event2_guest4"}, {"name": "g2"}], "status": 0}'
 
 echo "TODO: Testing update_guest....."
 
