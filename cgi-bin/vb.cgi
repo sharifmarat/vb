@@ -69,6 +69,7 @@ class VolleyDB:
                         check (is_paid in (0, 1)),
                     is_removed boolean default 0
                         check (is_removed in (0, 1)),
+                    updated_ts datetime not null default current_timestamp,
                     foreign key(event_id) references events(id));""")
 
     def getEvents(self):
@@ -104,19 +105,19 @@ class VolleyDB:
 
     def removeGuest(self, guest_id):
         with self.__connection:
-            self.__cursor.execute('update guests set is_removed=1 where id=?', (guest_id,))
+            self.__cursor.execute('update guests set is_removed=1, updated_ts=current_timestamp where id=?', (guest_id,))
             self.__connection.commit()
             return self.__cursor.rowcount == 1
 
     def lastRemovedGuests(self, count):
         removed = []
-        for row in self.__cursor.execute('select name from guests where is_removed=1 order by id desc limit ?', (count,)):
+        for row in self.__cursor.execute('select name from guests where is_removed=1 order by updated_ts desc limit ?', (count,)):
             removed.append({'name': row[0]})
         return removed
 
     def updateGuest(self, id, position, is_paid):
         with self.__connection:
-            self.__cursor.execute('update guests set position=?, is_paid=? where id=?', (position, is_paid, id))
+            self.__cursor.execute('update guests set position=?, is_paid=?, updated_ts=current_timestamp where id=?', (position, is_paid, id))
             self.__connection.commit()
             return self.__cursor.rowcount == 1
 
