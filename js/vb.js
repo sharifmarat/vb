@@ -29,9 +29,46 @@ function update_guest(guest_id) {
     action_reload({
       action: 'update_guest',
       id: guest_id,
-      position: position,
-      is_paid: paid
+      position: position
     });
+  }
+}
+
+// updates paid checkbox chkbx of a guest.
+function update_paid(chkbx) {
+  var guest_id = chkbx.attr('data-id');
+  var name = $('#guest_name_' + guest_id).text();
+  var paid = chkbx.is(':checked') ? 1 : 0;
+  var paid_rollback = 1 - paid;
+
+  if (confirm('Are you sure you want to update ' + name)) {
+    chkbx.attr('disabled', true);
+
+    $.ajax({type: "POST",
+      url: apiLink,
+      data: {
+        action: 'update_guest',
+        id: guest_id,
+        is_paid: paid
+      },
+      success: function(response){
+        var result = JSON.parse(response);
+        if (result.status != 0) {
+          alert('error: ' + result.message);
+          chkbx.prop('checked', paid_rollback);
+        } else {
+          chkbx.prop('checked', paid);
+        }
+        chkbx.removeAttr('disabled');
+      },
+      error: function(response){
+        alert('server error');
+        chkbx.prop('checked', paid_rollback);
+        chkbx.removeAttr('disabled');
+      }
+    });
+  } else {
+    chkbx.prop('checked', paid_rollback);
   }
 }
 
@@ -52,14 +89,30 @@ function remove_guest(guest_id) {
 }
 
 function add_guest(event_id) {
-  var name = $('#guest_name_new').val();
+  var first_name = $('#guest_first_name_new').val();
+  var last_name = $('#guest_last_name_new').val();
   var position = $('#guest_position_new').val();
+
+  if (!first_name || !$.trim(first_name)) {
+    alert('First name is missing');
+    return;
+  }
+
+  if (!last_name || !$.trim(last_name)) {
+    alert('Last name is missing');
+    return;
+  }
+
+  if (!position || !$.trim(position)) {
+    alert('Position is missing');
+    return;
+  }
 
   action_reload({
     action: 'add_guest',
     event_id: event_id,
-    name: name,
-    position: position
+    name: $.trim(first_name) + ' ' + $.trim(last_name),
+    position: $.trim(position)
   });
 }
 
