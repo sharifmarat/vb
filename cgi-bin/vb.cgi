@@ -117,7 +117,15 @@ class VolleyDB:
 
     def updateGuest(self, id, position, is_paid):
         with self.__connection:
-            self.__cursor.execute('update guests set position=?, is_paid=?, updated_ts=current_timestamp where id=?', (position, is_paid, id))
+            params = ()
+            query = 'update guests set '
+            if position is not None:
+                query += ' position=?, '
+                params += (position,)
+            if is_paid is not None:
+                query += ' is_paid=?, '
+                params += (is_paid,)
+            self.__cursor.execute(query + ' updated_ts=current_timestamp where id=?', params + (id,))
             self.__connection.commit()
             return self.__cursor.rowcount == 1
 
@@ -227,7 +235,7 @@ class VolleyAPI:
                return self.__error('Could not set such an event as primary.')
 
     def update_guest(self, form):
-       if 'id' not in form or 'position' not in form or 'is_paid' not in form:
+       if 'id' not in form or ('position' not in form and 'is_paid' not in form):
            return self.__error('Could not update a guest, fields are missing')
        with VolleyDB() as db:
            if db.updateGuest(form.getfirst('id'), form.getfirst('position'), form.getfirst('is_paid') == '1'):
