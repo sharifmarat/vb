@@ -29,8 +29,7 @@ function update_guest(guest_id) {
     action_reload({
       action: 'update_guest',
       id: guest_id,
-      position: position,
-      is_paid: paid
+      position: position
     });
   }
 }
