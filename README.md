@@ -51,9 +51,20 @@ In short a reply to every request fits `{"message": XXX, "status":0}`.
 
 ### Testing
 
-Run:
+The tests are written using standard unittest package 
+so they can be run with any standard compliant test runner
+(e.g. pytest, nose, nose2)
+
+Recommended way:
+
 ```
-(cd cgi-bin && ./test.sh 2>/dev/null)
+$ pip install pytest
+$ pytest
+```
+
+No-dependency version using built-in test runner:
+```
+python -m unittest discover -s tests
 ```
 
 ### Bootstrapping
