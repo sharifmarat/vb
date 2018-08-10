@@ -1,0 +1,53 @@
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="shortcut icon" href="">
+    <title>Let's volleyball</title>
+
+    <!-- common css -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <link rel="stylesheet" href="src/css/bulma.min.css">
+    <link rel="stylesheet" href="src/css/main.css">
+
+    <!-- components css -->
+    <link rel="stylesheet" href="src/css/components/modal.css">
+
+    <!-- page css -->
+    <link rel="stylesheet" href="src/css/index.css">
+
+    <!--  common js -->
+    <script src="src/js/external/vue.min.js"></script>
+    <script src="src/js/external/jquery-2.2.3.min.js"></script>
+    <script src="src/js/external/luxon.min.js"></script>
+    <script src="src/js/external/lodash.min.js@4.17.10"></script>
+    <script src="src/js/helper.js"></script>
+
+    <!-- components js -->
+    <script src="src/js/components/main-navbar.js"></script>
+    <script src="src/js/components/modal.js"></script>
+
+    <!-- page js -->
+    <script src="src/js/external/atc.min.js"></script>
+    <script src="src/js/index.js"></script>
+  </head>
+  <body>
+    <nav id="navbar">
+      <main-navbar></main-navbar>
+    </nav>
+
+    <div class="container is-fluid">
+      <div class="section column">
+        <div class="level columns">
+          <div id="current-event-info"></div>
+        </div>
+
+        <div class="level columns">
+          <div id="players-list"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  </html>

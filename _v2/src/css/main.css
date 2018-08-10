@@ -1,0 +1,9 @@
+.table-container {
+  overflow: auto;
+}
+
+.table-container__actions-cell {
+  white-space: nowrap;
+}
+
+/* modifiers */
