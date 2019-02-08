@@ -1,0 +1,38 @@
+.loader {
+    background-image: url('/logo.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+
+    position: absolute;
+
+    -webkit-animation:spin 1s linear infinite;
+    -moz-animation:spin 1s linear infinite;
+    animation:spin 1s linear infinite;
+}
+
+.loader img {
+    height: 100%;
+    width: 100%;
+}
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+
+.loader.player-loader {
+    left: 50%;
+
+    height: 38px;
+    width: 38px;
+}
+
+.loader.app-loader {
+    left: 50%;
+    top: 50%;
+
+    height: 64px;
+    margin:-32px 0 0 -32px;
+    width: 64px;
+}
