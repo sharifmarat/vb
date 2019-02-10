@@ -1,0 +1,103 @@
+.svg-inline--fa.fa-w-11 {
+    width: 1em !important;
+}
+
+.form-inline label {
+    text-align: left;
+    justify-content: initial;
+}
+
+.form-control:focus {
+    border-color: none;
+    box-shadow: none;
+}
+
+.input-group-text.loader {
+    margin: 0;
+    padding: 0;
+}
+
+.players-list .form-inline input[type="text"].form-control {
+    width: 100%;
+}
+
+.jumbotron {
+    position: relative;
+}
+
+.jumbotron.event-jumbotron {
+    padding: 3rem 2rem 2rem 2rem;
+}
+
+.event-top-left-btn {
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+
+.event-top-right-btn {
+    border-top-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.save-confirmation {
+    height: 38px;
+    line-height: 38px;
+}
+
+.list-group-item-action label {
+    cursor: pointer;
+}
+
+.dropdown-menu-login {
+    min-width: 15rem;
+}
+
+.paid-checkbox {
+    margin-top: 0;
+    margin-right: .25rem;
+    margin-left: 0;
+    position: relative;
+}
+
+.row {
+    position: relative;
+}
+
+.app-loader-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+
+.player-loader-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+    z-index: 20;
+}
+
+.whats-new-button {
+    cursor: pointer;
+}
+
+.payment-link {
+    word-break: break-all;
+}
