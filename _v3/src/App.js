@@ -8,7 +8,8 @@ import EventsList from './components/EventsList'
 import Event from './components/Event'
 import LoginForm from './components/LoginForm'
 
-import moment from 'moment'
+import _ from 'underscore'
+
 import firebase from './utils/firebase'
 import Utils from './utils/utils'
 
@@ -201,9 +202,11 @@ class App extends Component {
 
                 snapshot.forEach((event) => {
                     let data = event.val()
+                    data.playersPaid = _.where(data.players, {paid: true}).length
                     data.key = event.key
 
-                    if (moment(data.date, 'YYYY-MM-DD').unix() < moment().unix()) {
+
+                    if (data.locked === true) {
                         events.past.push(data)
                     } else {
                         events.future.push(data)
