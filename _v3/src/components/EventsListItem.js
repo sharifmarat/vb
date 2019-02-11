@@ -21,7 +21,12 @@ class EventsListItem extends Component {
             <Link to={"/event/" + this.props.event.key} className="list-group-item list-group-item-action">
                 <div className="row form-inline text-left">
                     <div className={"col-12 " + (this.state.user ? "col-md-3" : "col-md-4")}>
-                        <label> <FontAwesomeIcon icon="angle-double-right" className="d-inline d-md-none mr-1" /> <b>{this.props.event.location}</b></label>
+                        <label>
+                            <FontAwesomeIcon icon="angle-double-right" className="d-inline d-md-none mr-1" /> <b>{this.props.event.location}</b>
+                            {(this.props.event.playersPaid > 0 && this.props.event.locked !== true) && (
+                                <span className="badge badge-danger ml-2" title="Paid"> <span className="d-inline-block d-md-none mr-1">Paid</span> {this.props.event.playersPaid} / {Object.keys(this.props.event.players).length}</span>
+                            )}
+                        </label>
                     </div>
                     <div className={"col-12 " + (this.state.user ? "col-md-3" : "col-md-4")}>
                         <label> <FontAwesomeIcon icon="map-marker" className="d-inline d-md-none mr-1" /> {this.props.event.address}</label>
