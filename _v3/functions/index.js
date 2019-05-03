@@ -10,7 +10,7 @@ exports.eventCreated = functions.https.onCall((data, context) => {
         responseType: 'json',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'key=[PUSH_AUTHORIZATION_KEY]'
+            'Authorization': 'key=AAAAQe_HkEI:APA91bHeNaGLDB0IkkX4mtkhPMqhrcoZqYaY9lxrT4vZOP9NliLY8dpa5B9pGRUsjkF_Yv3xjBFTejhceN_DFIoGB1Dy6KlFHuem_VSK79RxeDey6oRch_ajyrBJyz--kBcgeY8mO7Zi'
         },
         data: {
             "notification": {

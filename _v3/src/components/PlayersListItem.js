@@ -48,7 +48,7 @@ class PlayersListItem extends Component {
                         <input className="form-control" type="text" name="position" value={this.state.position} onChange={this.changePosition.bind(this)} disabled={this.props.event.locked ? true : false} />
                     </div>
                     <div className="col-2 col-sm-1">
-                        <input type="checkbox" className="form-check-input paid-checkbox" defaultChecked={this.state.paid} onChange={this.changePaid.bind(this)} disabled={this.props.event.locked ? true : false} />
+                        <input type="checkbox" className="form-check-input paid-checkbox" checked={this.state.paid} onChange={this.changePaid.bind(this)} disabled={this.props.event.locked ? true : false} />
                     </div>
                     <div className="col-12 col-sm-2 col-lg-1 text-center text-sm-right mt-3 mt-sm-0">
                         {!this.props.event.locked && (
@@ -64,12 +64,23 @@ class PlayersListItem extends Component {
         );
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.player.position !== this.state.position || nextProps.player.paid !== this.state.paid) {
+            this.setState({
+                position: nextProps.player.position,
+                paid: nextProps.player.paid,
+            });
+        }
+    }
+
     remove(e) {
         e.preventDefault()
 
-        if (window.confirm("Are you sure you want to sign " + this.props.player.firstname + " " + this.props.player.lastname + " out?")) {
+        const fullName = this.props.player.firstname + " " + this.props.player.lastname;
+
+        if (window.confirm("Are you sure you want to sign " + fullName + " out?")) {
             firebase.database().ref("/events/" + this.props.event.key + "/players/" + this.props.player.key).remove().then(() => {
-                window.alert("Shame, " + this.props.player.firstname + " " + this.props.player.lastname + "!")
+                window.alert("Shame, " + fullName + "!")
             })
         }
     }
