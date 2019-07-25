@@ -116,18 +116,16 @@ class PlayersListItem extends Component {
 
           const eventDate = moment(this.props.event.date);
 
-          if (eventDate.diff(moment(), "days") < 1) {
-            alert +=
-              " Please, make sure that you announce in the group that you are not coming, so we can find a replacement!";
+          alert +=
+            " Please, make sure that you announce in the group that you are not coming, so we can find a replacement!";
 
-            const pushMessage = `${fullName} has just been removed from the list for ${
-              this.props.event.location
-              } on ${eventDate.format("dddd")} (${this.props.event.date})`;
+          const pushMessage = `${fullName} has just been removed from the list for ${
+            this.props.event.location
+            } on ${eventDate.format("dddd")} (${this.props.event.date})`;
 
-            fetch(
-              "https://www.ifnull.org/vb/cgi-bin/notify.cgi?msg=" + pushMessage
-            );
-          }
+          fetch(
+            "https://www.ifnull.org/vb/cgi-bin/notify.cgi?msg=" + pushMessage
+          );
 
           window.alert(alert);
         });
