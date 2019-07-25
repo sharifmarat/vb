@@ -106,25 +106,30 @@ class PlayersListItem extends Component {
         .database()
         .ref(
           "/events/" +
-            this.props.event.key +
-            "/players/" +
-            this.props.player.key
+          this.props.event.key +
+          "/players/" +
+          this.props.player.key
         )
         .remove()
         .then(() => {
-          window.alert("Shame, " + fullName + "!");
+          let alert = `Shame, ${fullName}!`;
 
           const eventDate = moment(this.props.event.date);
 
           if (eventDate.diff(moment(), "days") < 1) {
-            const message = `${fullName} has just been removed from the list for ${
+            alert +=
+              " Please, make sure that you announce in the group that you are not coming, so we can find a replacement!";
+
+            const pushMessage = `${fullName} has just been removed from the list for ${
               this.props.event.location
-            } on ${eventDate.format("dddd")} (${this.props.event.date})`;
+              } on ${eventDate.format("dddd")} (${this.props.event.date})`;
 
             fetch(
-              "https://www.ifnull.org/vb/cgi-bin/notify.cgi?msg=" + message
+              "https://www.ifnull.org/vb/cgi-bin/notify.cgi?msg=" + pushMessage
             );
           }
+
+          window.alert(alert);
         });
     }
   }
@@ -138,21 +143,21 @@ class PlayersListItem extends Component {
 
     this.setState({
       position: e.target.value,
-      updateTimeout: setTimeout(function() {
+      updateTimeout: setTimeout(function () {
         self.setState({
           updateFinished: false,
           updateLoader: true
         });
 
-        setTimeout(function() {
+        setTimeout(function () {
           firebase
             .database()
             .ref(
               "/events/" +
-                self.props.event.key +
-                "/players/" +
-                self.props.player.key +
-                "/"
+              self.props.event.key +
+              "/players/" +
+              self.props.player.key +
+              "/"
             )
             .update({
               position: self.state.position
@@ -161,7 +166,7 @@ class PlayersListItem extends Component {
               self.setState({
                 updateLoader: false,
                 updateFinished: true,
-                updateTimeout: setTimeout(function() {
+                updateTimeout: setTimeout(function () {
                   self.setState({ updateFinished: false });
                 }, self.timeoutTime * 1.5)
               });
@@ -185,15 +190,15 @@ class PlayersListItem extends Component {
     this.setState({
       updateFinished: false,
       updateLoader: true,
-      updateTimeout: setTimeout(function() {
+      updateTimeout: setTimeout(function () {
         firebase
           .database()
           .ref(
             "/events/" +
-              self.props.event.key +
-              "/players/" +
-              self.props.player.key +
-              "/"
+            self.props.event.key +
+            "/players/" +
+            self.props.player.key +
+            "/"
           )
           .update({
             paid: self.state.paid
@@ -202,7 +207,7 @@ class PlayersListItem extends Component {
             self.setState({
               updateLoader: false,
               updateFinished: true,
-              updateTimeout: setTimeout(function() {
+              updateTimeout: setTimeout(function () {
                 self.setState({ updateFinished: false });
               }, self.timeoutTime * 1.5)
             });
