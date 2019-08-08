@@ -12,10 +12,10 @@ import firebase from './utils/firebase'
 import Utils from './utils/utils'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPen, faUser, faTimes, faCalendar, faCalendarPlus, faLock, faLockOpen, faAngleDoubleLeft, faAngleDoubleRight, faBell, faMapMarker, faClock } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faUser, faTimes, faCalendar, faCalendarPlus, faLock, faLockOpen, faAngleDoubleLeft, faAngleDoubleRight, faBell, faMapMarker, faClock, faDollarSign, faVolleyballBall } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-library.add([faPen, faUser, faTimes, faCalendar, faCalendarPlus, faLock, faLockOpen, faAngleDoubleLeft, faAngleDoubleRight, faBell, faMapMarker, faClock])
+library.add([faPen, faUser, faTimes, faCalendar, faCalendarPlus, faLock, faLockOpen, faAngleDoubleLeft, faAngleDoubleRight, faBell, faMapMarker, faClock, faDollarSign, faVolleyballBall])
 
 let EventRoute = (props) => {
     let eventId = props.match.params.eventId

@@ -61,20 +61,30 @@ class EventsListItem extends Component {
                 <div className="row form-inline text-left">
                     <div className={"col-12 col-md-3"}>
                         <label>
-                            <FontAwesomeIcon icon="angle-double-right" className="d-inline d-md-none mr-1" /> <b>{this.props.event.location}</b>
+                            <FontAwesomeIcon icon="angle-double-right" className="mr-1" /> <b>{this.props.event.location}</b>
                         </label>
                     </div>
                     <div className={"col-12 col-md-3"}>
-                        <label> <FontAwesomeIcon icon="map-marker" className="d-inline d-md-none mr-1" /> {this.props.event.address}</label>
+                        <label> <FontAwesomeIcon icon="map-marker" className="mr-1" /> {this.props.event.address}</label>
                     </div>
                     <div className="col-12 col-md-3">
-                        <label> <FontAwesomeIcon icon="clock" className="d-inline d-md-none mr-1" /> {moment(this.props.event.date).format('D MMM')}, {this.props.event.time}</label>
+                        <label> <FontAwesomeIcon icon="clock" className="mr-1" /> {moment(this.props.event.date).format('D MMM')}, {this.props.event.time}</label>
                     </div>
                     <div className="col-12 col-md-3">
                         {(this.props.event.locked !== true) &&
                             <div className="row">
                                 <div className="col-auto">
-                                    {eventFinished ? <span>Paid</span> : <span>Players</span>}
+                                    {eventFinished ?
+                                        <label>
+                                            <FontAwesomeIcon icon="dollar-sign" className="mr-1" />
+                                            Paid
+                                        </label>
+                                        :
+                                        <label>
+                                            <FontAwesomeIcon icon="volleyball-ball" className="mr-1" />
+                                            Players
+                                        </label>
+                                    }
                                 </div>
                                 <div className="col">
                                     <div className="progress" style={progressStyle}>
