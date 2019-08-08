@@ -31,54 +31,54 @@ class Event extends Component {
             <FontAwesomeIcon icon="angle-double-left" />
           </Link>
           {this.state.editMode &&
-          !this.props.event.locked &&
-          this.state.user ? (
-            <div>
-              <EventForm
-                event={this.props.event}
-                callback={this.toggleEditMode}
-              />
+            !this.props.event.locked &&
+            this.state.user ? (
+              <div>
+                <EventForm
+                  event={this.props.event}
+                  callback={this.toggleEditMode}
+                />
 
-              <div
-                className="btn btn-danger event-top-right-btn"
-                role="button"
-                onClick={this.toggleEditMode}
-              >
-                <FontAwesomeIcon icon="times" />
-              </div>
-            </div>
-          ) : (
-            <div>
-              <h1 className="display-4 d-inline-block mr-3">
-                {this.props.event.location}
-              </h1>
-              <h3 className="d-inline-block">({this.props.event.address})</h3>
-              <p className="lead">
-                {moment(this.props.event.date).format("D MMM")},{" "}
-                {this.props.event.time}
-              </p>
-              {this.props.event.paymentLink && (
-                <p className="lead payment-link">
-                  <a
-                    href={this.props.event.paymentLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {this.props.event.paymentLink}
-                  </a>
-                </p>
-              )}
-              {this.state.user && !this.props.event.locked && (
                 <div
-                  className="btn btn-dark event-top-right-btn"
+                  className="btn btn-danger event-top-right-btn"
                   role="button"
                   onClick={this.toggleEditMode}
                 >
-                  <FontAwesomeIcon icon="pen" />
+                  <FontAwesomeIcon icon="times" />
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            ) : (
+              <div>
+                <h1 className="display-4 d-inline-block mr-3">
+                  {this.props.event.location}
+                </h1>
+                <h3 className="d-inline-block">({this.props.event.address})</h3>
+                <p className="lead">
+                  {moment(this.props.event.date).format("D MMM")},{" "}
+                  {this.props.event.time}
+                </p>
+                {this.props.event.paymentLink && (
+                  <p className="lead payment-link">
+                    <a
+                      href={this.props.event.paymentLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {this.props.event.paymentLink}
+                    </a>
+                  </p>
+                )}
+                {this.state.user && !this.props.event.locked && (
+                  <div
+                    className="btn btn-dark event-top-right-btn"
+                    role="button"
+                    onClick={this.toggleEditMode}
+                  >
+                    <FontAwesomeIcon icon="pen" />
+                  </div>
+                )}
+              </div>
+            )}
         </div>
 
         <PlayersList
@@ -117,10 +117,10 @@ class Event extends Component {
   copePlayersList() {
     let copyText = "";
 
-    Object.keys(this.props.event.players).map(key => {
+    Object.keys(this.props.event.players).forEach((key) => {
       copyText += `${this.props.event.players[key].firstname} ${
         this.props.event.players[key].lastname
-      }\t${this.props.event.players[key].position}\n`;
+        }\t${this.props.event.players[key].position}\n`;
     });
 
     const el = document.createElement("textarea");
