@@ -68,7 +68,7 @@ class EventsListItem extends Component {
                         <label> <FontAwesomeIcon icon="map-marker" className="mr-1" /> {this.props.event.address}</label>
                     </div>
                     <div className="col-12 col-md-3">
-                        <label> <FontAwesomeIcon icon="clock" className="mr-1" /> {moment(this.props.event.date).format('D MMM')}, {this.props.event.time}</label>
+                        <label> <FontAwesomeIcon icon="clock" className="mr-1" /> {moment(this.props.event.date).format('ddd, D MMM')}, {this.props.event.time}</label>
                     </div>
                     <div className="col-12 col-md-3">
                         {(this.props.event.locked !== true) &&

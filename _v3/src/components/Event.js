@@ -54,7 +54,7 @@ class Event extends Component {
                 </h1>
                 <h3 className="d-inline-block">({this.props.event.address})</h3>
                 <p className="lead">
-                  {moment(this.props.event.date).format("D MMM")},{" "}
+                  {moment(this.props.event.date).format("ddd, D MMM")},{" "}
                   {this.props.event.time}
                 </p>
                 {this.props.event.paymentLink && (
