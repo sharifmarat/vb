@@ -4,6 +4,21 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### Dependencies
+First make sure that you have the latest `npm` installed. Then you can run in the project root:
+```shell
+npm install -g
+```
+Note that `-g` will install all dependencies globally. If you don't want that, you can either skip `-g` parameter or
+use the user with admin privileges to do that.
+
+### Configuration
+You need to provide correct configuration before running the project:
+```shell
+cp config-template.json src/utils/config/firebase.json
+```
+Modify `src/utils/config/firebase.json` to your needs.
+
 ### `npm start`
 
 Runs the app in the development mode.<br>
