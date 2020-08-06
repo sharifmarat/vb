@@ -124,7 +124,7 @@ class PlayersListItem extends Component {
             } on ${eventDate.format("dddd")} (${this.props.event.date})`;
 
           fetch(
-            "https://www.ifnull.org/vb/cgi-bin/notify.cgi?msg=" + pushMessage
+            "https://ifnull.org/vb/cgi-bin/notify.cgi?msg=" + pushMessage
           );
 
           window.alert(alert);
