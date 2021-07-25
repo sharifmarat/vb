@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import EventsListItem from './EventsListItem'
 import EventForm from './EventForm'
 
+import moment from 'moment'
+
 class EventsList extends Component {
     constructor(props) {
         super(props);
@@ -48,7 +50,11 @@ class EventsList extends Component {
                 )}
                 {this.props.events.future.length > 0 ? (
                     <div className="list-group shadow-sm">
-                        {this.props.events.future.map((event, i) =>
+                        {this.props.events.future
+                          .sort((first, second) => {
+                            return moment(first.date) - moment(second.date);
+                          })
+                          .map((event, i) =>
                             <EventsListItem event={event} key={i} />
                         )}
                     </div>
@@ -56,16 +62,18 @@ class EventsList extends Component {
                     <p>People are lazy and are not going to play soon.</p>
                 )}
 
-                {this.props.events.past.length > 0 && (
-                    <div>
-                        <h5 className="text-center my-4">Past</h5>
-                        <div className="list-group">
-                            {this.props.events.past.map((event, i) =>
-                                <EventsListItem event={event} key={i} />
-                            )}
-                        </div>
-                    </div>
-                )}
+                <div>
+                    <h5 className="text-center my-4">Past</h5>
+                    {(this.props.events.past.length > 0 && this.state.user) ? (
+                            <div className="list-group">
+                                {this.props.events.past.map((event, i) =>
+                                    <EventsListItem event={event} key={i} />
+                                )}
+                            </div>
+                    ) : (
+                        <p>Only admins can see past events</p>
+                    )}
+                </div>
             </div>
         );
     }
