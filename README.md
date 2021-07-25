@@ -1,85 +1,59 @@
-## Intro
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Simple and lightweight application to organize volleyball events.
+## Available Scripts
 
-Sqlite engine is used to manage a database.
+In the project directory, you can run:
 
-`vb.cgi` is rest-like API in python3.
-
-## Dependencies
-
-- python3
-- sqlite3
-- python
-- web server to handle cgi (e.g. apache2, nginx+fastcgi)
-
-## Structure
-
-- `cgi-bin` contains database API
-- `css`, `js`, `*.html` are regular html files
-
-## Database API
-
-`vb.cgi` parses form (`QUERY_STRING`) from a web-server and replies with a json.  
-Env var `VOLLEY_DB` overwrites default database.  
-Env var `VOLLEY_DEBUG` enables debugging.
-
-### API
-
-`action=init` - Initializes a database with tables.
-
-`action=add_event&date=d&location=l3&payment_link=p` - Adds an event.
-
-`action=events` - Returns all events.
-
-`action=update_event&id=3&date=d&location=l3&payment_link=p` - Updates an event.
-
-`action=add_guest&event_id=3&name=n&position=pos` - Adds an event. If `event_id` is not set, a guest is added to a primary event.
-
-`action=event&id=3` - Returns an event with all guests. If `id` is not provided a primary event is used.
-
-`action=remove_guest&id=2` - To remove a guest.
-
-`action=set_primary_event&id=2` - Set a primary event. A primary event is the one which is displayed at `index.html`.
-
-`action=shame` - Returns list of last N cancellations.
-
-In short a reply to every request fits `{"message": XXX, "status":0}`.  
-`status=0` is on success and `message` contains corresponding data.  
-`status=1` is on failure and `message` contains an error message.
-
-
-### Testing
-
-The tests are written using standard unittest package 
-so they can be run with any standard compliant test runner
-(e.g. pytest, nose, nose2)
-
-Recommended way:
-
+### Dependencies
+First make sure that you have the latest `npm` installed. Then you can run in the project root:
+```shell
+npm install -g
 ```
-$ pip install pytest
-$ pytest
+Note that `-g` will install all dependencies globally. If you don't want that, you can either skip `-g` parameter or
+use the user with admin privileges to do that.
+
+### Configuration
+You need to provide correct configuration before running the project:
+```shell
+cp config-template.json src/utils/config/firebase.json
 ```
+Modify `src/utils/config/firebase.json` to your needs.
 
-No-dependency version using built-in test runner:
-```
-python -m unittest discover -s tests
-```
+### `npm start`
 
-### Bootstrapping
+Runs the app in the development mode.<br>
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-To run it locally from the repo root:  
-```  
-# initialize the database
-(cd cgi-bin && ./init.sh)
-# start the cgi web server
-VOLLEY_DB=cgi-bin/vb.sqlite python3 -m http.server --bind 0.0.0.0 --cgi 8000
-```
+The page will reload if you make edits.<br>
+You will also see any lint errors in the console.
 
-And now open `localhost:8000` in browser.
+### `npm test`
 
-### TODO
+Launches the test runner in the interactive watch mode.<br>
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-- Make an event clickable on `/events.html`.
+### `npm run build`
 
+Builds the app for production to the `build` folder.<br>
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.<br>
+Your app is ready to be deployed!
+
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
