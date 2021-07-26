@@ -71,7 +71,7 @@ class EventsListItem extends Component {
                         <label> <FontAwesomeIcon icon="clock" className="mr-1" /> {moment(this.props.event.date).format('ddd, D MMM')}, {this.props.event.time}</label>
                     </div>
                     <div className="col-12 col-md-3">
-                        {(this.props.event.locked !== true) &&
+                        {(this.props.locked !== true) &&
                             <div className="row">
                                 <div className="col-auto">
                                     {eventFinished ?
@@ -107,7 +107,7 @@ class EventsListItem extends Component {
                 {this.state.user && (
                     <div className="row mt-3">
                         <div className="col-12 text-center text-md-right mt-3 mt-md-0">
-                            {this.props.event.locked ? (
+                            {this.props.locked ? (
                                 <div className="btn btn-light shadow-sm" role="button" onClick={this.unlock.bind(this)} title="Unlock">
                                     <span className="d-inline-block d-md-none mr-1">Unlock</span>
                                     <FontAwesomeIcon icon="lock-open" />
@@ -143,8 +143,14 @@ class EventsListItem extends Component {
         e.preventDefault()
 
         if (window.confirm("Are you sure you want to lock the event '" + this.props.event.location + "'?")) {
-            firebase.database().ref("/events/" + this.props.event.key).update({
-                locked: true
+            firebase.database().ref("/past_events/").push(this.props.event).then((data) => {
+                firebase.database().ref("/events/" + this.props.event.key).remove().then(() => {
+                    // removed -> refresh
+                }).catch((error) => {
+                    alert(error);
+                });
+            }).catch((error) => {
+                alert(error);
             })
         }
     }
@@ -153,8 +159,14 @@ class EventsListItem extends Component {
         e.preventDefault()
 
         if (window.confirm("Are you sure you want to unlock the event '" + this.props.event.location + "'?")) {
-            firebase.database().ref("/events/" + this.props.event.key).update({
-                locked: false
+            firebase.database().ref("/events/").push(this.props.event).then((data) => {
+                firebase.database().ref("/past_events/" + this.props.event.key).remove().then(() => {
+                    // removed -> refresh
+                }).catch((error) => {
+                    alert(error);
+                });
+            }).catch((error) => {
+                alert(error);
             })
         }
     }

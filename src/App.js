@@ -19,12 +19,17 @@ library.add([faPen, faUser, faTimes, faCalendar, faCalendarPlus, faLock, faLockO
 
 let EventRoute = (props) => {
     let eventId = props.match.params.eventId
-    let event = props.events.future.concat(props.events.past).find((event) => event.key === eventId)
+    let event = props.events.future.find((event) => event.key === eventId)
+    let locked = false;
+    if (!event) {
+        event = props.events.past.find((event) => event.key === eventId)
+        locked = true;
+    }
 
     if (event) {
         return (
             <div>
-                <Event event={event} history={props.history} />
+                <Event event={event} history={props.history} locked={locked} />
             </div>
         )
     } else {
@@ -40,7 +45,7 @@ let EventEditRoute = (props) => {
 
     return (
         <div>
-            <Event event={event} history={props.history} />
+            <Event event={event} history={props.history} locked={false} />
         </div>
     )
 }
@@ -171,20 +176,33 @@ class App extends Component {
                 snapshot.forEach((event) => {
                     let data = event.val()
                     data.key = event.key
-
-
-                    if (data.locked === true) {
-                        events.past.push(data)
-                    } else {
-                        events.future.push(data)
-                    }
-                })
-
-                events.past.reverse()
+                    events.future.push(data)
+                });
                 events.future.reverse()
 
-                this.setState({ events: events })
-                this.hideLoader()
+                if (!this.state.user) {
+                    // no need to load past events if no user
+                    this.setState({ events: events })
+                    this.hideLoader()
+                } else {
+                    // load past events only if user is authorized
+                    firebase.database().ref('past_events').orderByChild('date').on('value', (snapshotPast) => {
+                        snapshotPast.forEach((event) => {
+                            let data = event.val()
+                            data.key = event.key
+                            events.past.push(data)
+                        });
+
+                        events.past.reverse()
+
+                        this.setState({ events: events })
+                        this.hideLoader()
+                    }, (error) => {
+                        console.log(error);
+                        this.setState({ events: events })
+                        this.hideLoader()
+                    });
+                }
             });
         });
     }

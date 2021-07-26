@@ -53,7 +53,7 @@ class PlayersListItem extends Component {
               name="position"
               value={this.state.position}
               onChange={this.changePosition.bind(this)}
-              disabled={this.props.event.locked ? true : false}
+              disabled={this.props.locked ? true : false}
             />
           </div>
           <div className="col-2 col-sm-1">
@@ -62,11 +62,11 @@ class PlayersListItem extends Component {
               className="form-check-input paid-checkbox"
               checked={this.state.paid}
               onChange={this.changePaid.bind(this)}
-              disabled={this.props.event.locked ? true : false}
+              disabled={this.props.locked ? true : false}
             />
           </div>
           <div className="col-12 col-sm-2 col-lg-1 text-center text-sm-right mt-3 mt-sm-0">
-            {!this.props.event.locked && (
+            {!this.props.locked && (
               <div
                 className="btn btn-danger shadow-sm"
                 onClick={this.remove.bind(this)}

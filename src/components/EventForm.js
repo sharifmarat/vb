@@ -80,8 +80,7 @@ class EventForm extends Component {
                 address: this.state.address,
                 date: this.state.date,
                 time: this.state.time,
-                paymentLink: this.state.paymentLink,
-                locked: false
+                paymentLink: this.state.paymentLink
             }).then((data) => {
                 self.onEventCreated({
                     location: self.state.location,

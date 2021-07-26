@@ -9,6 +9,16 @@
           ".write": true
         }
       }
+    },
+    "past_events": {
+      ".read": "auth.uid != null",
+      ".write": "auth.uid != null",
+      "$eventId": {
+        "players": {
+          ".read": "auth.uid != null",
+          ".write": "auth.uid != null"
+        }
+      }
     }
   }
 }

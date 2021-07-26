@@ -25,12 +25,12 @@ class PlayersList extends Component {
                         </div>
                         <hr />
                         {Object.keys(this.props.players).map((key, index) =>
-                            <PlayersListItem player={{...this.props.players[key], key: key}} key={index} index={index} event={this.props.event} />
+                            <PlayersListItem player={{...this.props.players[key], key: key}} key={index} index={index} event={this.props.event} locked={this.props.locked} />
                         )}
                     </div>
                 ) : (
                     <div>
-                        {!this.props.event.locked ? (
+                        {!this.props.locked ? (
                             <div>
                                 <p>
                                     Be the first one to sign up!
@@ -42,7 +42,7 @@ class PlayersList extends Component {
                         )}
                     </div>
                 )}
-                {!this.props.event.locked && (
+                {!this.props.locked && (
                     <NewPlayersListItem eventKey={this.props.event.key} />
                 )}
             </div>

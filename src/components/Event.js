@@ -31,7 +31,7 @@ class Event extends Component {
             <FontAwesomeIcon icon="angle-double-left" />
           </Link>
           {this.state.editMode &&
-            !this.props.event.locked &&
+            !this.props.locked &&
             this.state.user ? (
               <div>
                 <EventForm
@@ -68,7 +68,7 @@ class Event extends Component {
                     </a>
                   </p>
                 )}
-                {this.state.user && !this.props.event.locked && (
+                {this.state.user && !this.props.locked && (
                   <div
                     className="btn btn-dark event-top-right-btn"
                     role="button"
@@ -84,6 +84,7 @@ class Event extends Component {
         <PlayersList
           players={this.props.event.players}
           event={this.props.event}
+          locked={this.props.locked}
         />
 
         <div className="text-right mt-4">

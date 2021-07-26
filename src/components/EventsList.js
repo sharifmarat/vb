@@ -55,7 +55,7 @@ class EventsList extends Component {
                             return moment(first.date) - moment(second.date);
                           })
                           .map((event, i) =>
-                            <EventsListItem event={event} key={i} />
+                            <EventsListItem event={event} key={i} locked={false} />
                         )}
                     </div>
                 ) : (
@@ -67,7 +67,7 @@ class EventsList extends Component {
                     {(this.props.events.past.length > 0 && this.state.user) ? (
                             <div className="list-group">
                                 {this.props.events.past.map((event, i) =>
-                                    <EventsListItem event={event} key={i} />
+                                    <EventsListItem event={event} key={i} locked={true} />
                                 )}
                             </div>
                     ) : (
