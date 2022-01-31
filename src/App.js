@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route } from "react-router-dom"
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from "react-router-dom";
 
 import './App.css'
 import './Loaders.css'
@@ -64,7 +68,7 @@ class App extends Component {
         }
 
         if (firebase.messaging.isSupported()) {
-            firebase.messaging().usePublicVapidKey("BEDigdAi7913zKWLYvuZL0xZo_SUOy1dsCRIw01NBYJJfymV9fFZdHv48t7a1Ds-nCawgrRv_0kxHVnlkdH2gpE")
+            firebase.messaging().usePublicVapidKey("BPa4rcz9NKL8JtdAO6pyyhL3iUrIOWwXis-vXgaZ0GdE-rlJjoNh_7F1MIxiM8f1Sk4WJh7GtWObgnZ5sY_CGGE")
 
             firebase.messaging().onMessage(function (payload) {
                 console.log('Message received. ', payload);
@@ -73,8 +77,11 @@ class App extends Component {
     }
 
     render() {
+        console.log(`rendering main with loading = ${this.state.loading}`);
+        console.log(`user state = ${this.state.user}`);
+        console.log(this.state.events);
         return (
-            <Router>
+            <BrowserRouter>
                 {this.state.loading ? (
                     <div className="app-loader-container">
                         <div className="loader app-loader"></div>
@@ -122,15 +129,17 @@ class App extends Component {
                             <div className="container mt-4">
                                 <div className="row no-gutters mb-4">
                                     <div className="col-12">
-                                        <Route exact path="/" render={(props) => <EventsList events={this.state.events} {...props} />} />
-                                        <Route exact path="/event/:eventId" render={(props) => <EventRoute events={this.state.events} {...props} />} />
-                                        <Route exact path="/event/:eventId/edit" render={(props) => <EventEditRoute events={this.state.events} {...props} />} />
+                                        <Routes>
+                                            <Route exact path="/" render={(props) => <EventsList events={this.state.events} {...props} />} />
+                                            <Route exact path="/event/:eventId" render={(props) => <EventRoute events={this.state.events} {...props} />} />
+                                            <Route exact path="/event/:eventId/edit" render={(props) => <EventEditRoute events={this.state.events} {...props} />} />
+                                        </Routes>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     )}
-            </Router>
+            </BrowserRouter>
         );
     }
 
@@ -168,6 +177,7 @@ class App extends Component {
             }
 
             firebase.database().ref('events').orderByChild('date').on('value', (snapshot) => {
+                console.log('Received events');
                 var events = {
                     future: [],
                     past: []
@@ -177,13 +187,16 @@ class App extends Component {
                     let data = event.val()
                     data.key = event.key
                     events.future.push(data)
+                    console.log('Pushed events');
                 });
                 events.future.reverse()
 
                 if (!this.state.user) {
                     // no need to load past events if no user
+                    console.log('Reloading');
                     this.setState({ events: events })
                     this.hideLoader()
+                    console.log('Finished setting state and hiding loader');
                 } else {
                     // load past events only if user is authorized
                     firebase.database().ref('past_events').orderByChild('date').on('value', (snapshotPast) => {
