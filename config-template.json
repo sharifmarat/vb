@@ -7,5 +7,6 @@
   "storageBucket": "...",
   "messagingSenderId": "...",
 
+  "brandName": "VolleyAms",
   "trackPayments": true|false
 }

@@ -8,7 +8,8 @@ import EventsList from './components/EventsList'
 import Event from './components/Event'
 import LoginForm from './components/LoginForm'
 
-import firebase from './utils/firebase'
+import firebase, { config } from './utils/firebase'
+
 import Utils from './utils/utils'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -82,7 +83,7 @@ class App extends Component {
                 ) : (
                         <div>
                             <nav className="navbar navbar-expand-sm navbar-light bg-light mb-2 shadow-sm col">
-                                <span className="navbar-brand">Volley<b>Ams</b></span>
+                                <span className="navbar-brand">{config.brandName}</span>
                                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                                     <span className="navbar-toggler-icon"></span>
                                 </button>
