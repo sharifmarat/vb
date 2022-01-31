@@ -64,7 +64,7 @@ class App extends Component {
         }
 
         if (firebase.messaging.isSupported()) {
-            firebase.messaging().usePublicVapidKey("BEDigdAi7913zKWLYvuZL0xZo_SUOy1dsCRIw01NBYJJfymV9fFZdHv48t7a1Ds-nCawgrRv_0kxHVnlkdH2gpE")
+            firebase.messaging().usePublicVapidKey("BPa4rcz9NKL8JtdAO6pyyhL3iUrIOWwXis-vXgaZ0GdE-rlJjoNh_7F1MIxiM8f1Sk4WJh7GtWObgnZ5sY_CGGE")
 
             firebase.messaging().onMessage(function (payload) {
                 console.log('Message received. ', payload);
