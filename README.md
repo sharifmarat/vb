@@ -15,6 +15,7 @@ use the user with admin privileges to do that.
 
 ### Configuration
 You need to provide correct configuration before running the project:
+
 ```shell
 cp config-template.json src/utils/config/firebase.json
 ```
