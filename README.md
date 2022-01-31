@@ -6,6 +6,7 @@ In the project directory, you can run:
 
 ### Dependencies
 First make sure that you have the latest `npm` installed. Then you can run in the project root:
+
 ```shell
 npm install -g
 ```
