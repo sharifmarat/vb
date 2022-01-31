@@ -3,8 +3,6 @@ import React, { Component } from 'react'
 import firebase from '../utils/firebase'
 
 class EventForm extends Component {
-    onEventCreated = firebase.functions().httpsCallable('eventCreated')
-
     constructor(props) {
         super(props);
 
@@ -82,14 +80,6 @@ class EventForm extends Component {
                 time: this.state.time,
                 paymentLink: this.state.paymentLink
             }).then((data) => {
-                self.onEventCreated({
-                    location: self.state.location,
-                    address: self.state.address,
-                    date: self.state.date,
-                    time: self.state.time,
-                    link: window.location.host + '/event/' + data.key
-                })
-
                 if (self.props.callback) {
                     self.props.callback()
                 }
