@@ -3,6 +3,8 @@ import React, { Component } from 'react'
 import PlayersListItem from './PlayersListItem'
 import NewPlayersListItem from './NewPlayersListItem'
 
+import { config } from '../utils/firebase'
+
 class PlayersList extends Component {
     render() {
         return (
@@ -19,9 +21,11 @@ class PlayersList extends Component {
                             <div className="col-3 col-sm-3">
                                 <label>Position</label>
                             </div>
-                            <div className="col-2 col-sm-3 col-lg-2">
-                                <label>Paid</label>
-                            </div>
+                            {config.trackPayments && (
+                                <div className="col-2 col-sm-3 col-lg-2">
+                                    <label>Paid</label>
+                                </div>
+                            )}
                         </div>
                         <hr />
                         {Object.keys(this.props.players).map((key, index) =>

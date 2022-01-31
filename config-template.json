@@ -5,5 +5,7 @@
   "projectId": "",
   "appId": "",
   "storageBucket": "...",
-  "messagingSenderId": "..."
+  "messagingSenderId": "...",
+
+  "trackPayments": true|false
 }

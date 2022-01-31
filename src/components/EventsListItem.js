@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import _ from 'underscore'
 
-import firebase from '../utils/firebase'
+import firebase, { config } from '../utils/firebase'
 
 import { Link } from "react-router-dom"
 
@@ -45,7 +45,7 @@ class EventsListItem extends Component {
 
         const progressBarStyle = {
             width: (
-                (eventFinished) ?
+                (eventFinished && config.trackPayments) ?
                     (playersPaid / playersCount) :
                     (playersCount / maxPlayers)
             ) * 100 + '%'
@@ -74,7 +74,7 @@ class EventsListItem extends Component {
                         {(this.props.locked !== true) &&
                             <div className="row">
                                 <div className="col-auto">
-                                    {eventFinished ?
+                                    {(eventFinished && config.trackPayments) ?
                                         <label>
                                             <FontAwesomeIcon icon="dollar-sign" className="mr-1" />
                                             Paid
@@ -90,7 +90,7 @@ class EventsListItem extends Component {
                                     <div className="progress" style={progressStyle}>
                                         <div className={progressBarClasses.join(' ')} role="progressbar" style={progressBarStyle}>
                                             <span className="px-2 text-white text-center">
-                                                {eventFinished ?
+                                                {(eventFinished && config.trackPayments) ?
                                                     <span>{playersPaid} / {playersCount}</span>
                                                     :
                                                     <span>{playersCount} / {maxPlayers}</span>

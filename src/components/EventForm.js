@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import firebase from '../utils/firebase'
+import firebase, { config } from '../utils/firebase'
 
 class EventForm extends Component {
     constructor(props) {
@@ -40,10 +40,12 @@ class EventForm extends Component {
                             <input type="text" required className="form-control" id="time" name="time" value={this.state.time} onChange={this.handleChange.bind(this)} placeholder="hh:mm - hh:mm" />
                         </div>
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="paymentLink">Payment link</label>
-                        <input type="text" className="form-control" id="paymentLink" name="paymentLink" value={this.state.paymentLink} onChange={this.handleChange.bind(this)} placeholder="Payment link" />
-                    </div>
+                    {config.trackPayments && (
+                        <div className="form-group">
+                            <label htmlFor="paymentLink">Payment link</label>
+                            <input type="text" className="form-control" id="paymentLink" name="paymentLink" value={this.state.paymentLink} onChange={this.handleChange.bind(this)} placeholder="Payment link" />
+                        </div>
+                    )}
                     <button type="submit" className="btn btn-success shadow-sm">Save</button>
                 </form>
             </div>

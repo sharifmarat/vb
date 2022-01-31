@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import moment from "moment";
 
-import firebase from "../utils/firebase";
+import firebase, { config } from '../utils/firebase';
 
 class PlayersListItem extends Component {
   timeoutTime = 1000;
@@ -57,13 +57,15 @@ class PlayersListItem extends Component {
             />
           </div>
           <div className="col-2 col-sm-1">
-            <input
-              type="checkbox"
-              className="form-check-input paid-checkbox"
-              checked={this.state.paid}
-              onChange={this.changePaid.bind(this)}
-              disabled={this.props.locked ? true : false}
-            />
+              {config.trackPayments && (
+                  <input
+                    type="checkbox"
+                    className="form-check-input paid-checkbox"
+                    checked={this.state.paid}
+                    onChange={this.changePaid.bind(this)}
+                    disabled={this.props.locked ? true : false}
+                  />
+              )}
           </div>
           <div className="col-12 col-sm-2 col-lg-1 text-center text-sm-right mt-3 mt-sm-0">
             {!this.props.locked && (
