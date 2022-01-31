@@ -1,9 +1,9 @@
-import firebase from "firebase/app";
+import firebase from "firebase/compat/app";
 
-import "firebase/database";
-import "firebase/auth";
-import "firebase/messaging";
-import "firebase/functions";
+import "firebase/compat/database";
+import "firebase/compat/auth";
+import "firebase/compat/messaging";
+import "firebase/compat/functions";
 
 const config = require("./config/firebase.json");
 

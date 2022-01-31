@@ -1,5 +1,7 @@
 {
-  "engines": {"node":"14"},
+  "engines": {
+    "node": "14"
+  },
   "name": "volleyapp",
   "version": "0.1.1",
   "private": true,
@@ -7,13 +9,13 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.18",
     "@fortawesome/free-solid-svg-icons": "^5.8.2",
     "@fortawesome/react-fontawesome": "^0.1.4",
-    "firebase": "^8.8.0",
-    "firebase-tools": "^9.16.0",
+    "firebase": "^9.6.5",
+    "firebase-tools": "^10.1.2",
     "moment": "^2.24.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-router-dom": "^4.3.1",
-    "react-scripts": "^4.0.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^6.2.1",
+    "react-scripts": "^5.0.0",
     "underscore": "^1.13.1"
   },
   "scripts": {
