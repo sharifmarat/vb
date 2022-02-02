@@ -32,7 +32,10 @@ class EventsListItem extends Component {
         // There has to be at least 12 players to play
         let maxPlayers = 12;
 
-        if (playersCount >= 12) {
+        if (this.props.event.maxPlayers && parseInt(this.props.event.maxPlayers)) {
+            // Limit number of players if event has restrictions
+            maxPlayers = parseInt(this.props.event.maxPlayers);
+        } else if (playersCount >= 12) {
             const currentFullTeams = Math.floor(playersCount / step);
 
             maxPlayers = Math.ceil((currentFullTeams + 1) * step);

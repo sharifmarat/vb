@@ -12,6 +12,7 @@ class EventForm extends Component {
             date: (this.props.event) ? this.props.event.date : "",
             time: (this.props.event) ? this.props.event.time : "",
             paymentLink: (this.props.event) ? this.props.event.paymentLink : "",
+            maxPlayers: (this.props.event) ? this.props.event.maxPlayers : "",
         }
     }
 
@@ -46,6 +47,10 @@ class EventForm extends Component {
                             <input type="text" className="form-control" id="paymentLink" name="paymentLink" value={this.state.paymentLink} onChange={this.handleChange.bind(this)} placeholder="Payment link" />
                         </div>
                     )}
+                    <div className="form-group">
+                        <label htmlFor="maxPlayers">Max players</label>
+                        <input type="text" className="form-control" id="maxPlayers" name="maxPlayers" value={this.state.maxPlayers} onChange={this.handleChange.bind(this)} placeholder="unlimited" />
+                    </div>
                     <button type="submit" className="btn btn-success shadow-sm">Save</button>
                 </form>
             </div>
@@ -66,7 +71,8 @@ class EventForm extends Component {
                 address: this.state.address,
                 date: this.state.date,
                 time: this.state.time,
-                paymentLink: this.state.paymentLink
+                paymentLink: this.state.paymentLink,
+                maxPlayers: this.state.maxPlayers
             }).then(() => {
                 if (self.props.callback) {
                     self.props.callback()
@@ -80,7 +86,8 @@ class EventForm extends Component {
                 address: this.state.address,
                 date: this.state.date,
                 time: this.state.time,
-                paymentLink: this.state.paymentLink
+                paymentLink: this.state.paymentLink,
+                maxPlayers: this.state.maxPlayers
             }).then((data) => {
                 if (self.props.callback) {
                     self.props.callback()

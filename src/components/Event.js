@@ -68,6 +68,11 @@ class Event extends Component {
                     </a>
                   </p>
                 )}
+                {this.props.event.maxPlayers && parseInt(this.props.event.maxPlayers) && (
+                  <p className="lead">
+                    Max players: {this.props.event.maxPlayers}
+                  </p>
+                )}
                 {this.state.user && !this.props.locked && (
                   <div
                     className="btn btn-dark event-top-right-btn"
