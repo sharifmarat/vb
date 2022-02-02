@@ -8,5 +8,6 @@
   "messagingSenderId": "...",
 
   "brandName": "VolleyAms",
+  "notifyURL": "http://example.com/notify?msg=",
   "trackPayments": true|false
 }
